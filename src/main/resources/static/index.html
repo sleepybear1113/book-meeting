@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Meeting Auto-book System</title>
+    <script src="lib/axios.min.js"></script>
+</head>
+
+<body>
+<script src="js.js"></script>
+
+<div id="div-login" style="border: 1px solid black">
+    <label for="username">用户名：</label><input id="username">
+    <br/>
+    <label for="password">密　码：</label><input id="password" type="password">
+    <br/>
+    <label for="corp">corp邮箱</label><input id="corp" class="authType" type="radio" name="authType" checked><a>|</a>
+    <label for="mesg">mesg.corp域</label><input id="mesg" class="authType" type="radio" name="authType"><a>|</a>
+    <label for="yixin">翼信邮箱</label><input id="yixin" class="authType" type="radio" name="authType"><a>|</a>
+    <label for="ezxr">易现账号</label><input id="ezxr" class="authType" type="radio" name="authType">
+    <br/>
+    <button onclick="testLogin()">测试登录</button>
+</div>
+
+
+<div id="room-getAllFloors">
+    <label for="area-beijing">北京</label><input id="area-beijing" class="authType" type="radio" name="area" value="1"><a>|</a>
+    <label for="area-shanghai">上海</label><input id="area-shanghai" class="authType" type="radio" name="area"
+                                                value="2"><a>|</a>
+    <label for="area-guangzhou">广州</label><input id="area-guangzhou" class="authType" type="radio" name="area"
+                                                 value="3"><a>|</a>
+    <label for="area-hangzhou">杭州</label><input id="area-hangzhou" class="authType" type="radio" name="area" checked
+                                                value="5"><a>|</a>
+    <label for="area-shenzhen">深圳</label><input id="area-shenzhen" class="authType" type="radio" name="area"
+                                                value="8"><a>|</a>
+    <label for="area-ningbo">宁波</label><input id="area-ningbo" class="authType" type="radio" name="area"
+                                              value="13"><a>|</a>
+    <label for="area-quzhou">衢州</label><input id="area-quzhou" class="authType" type="radio" name="area"
+                                              value="15"><a>|</a>
+
+    <button onclick="getAllFloors()">获取全部楼层</button>
+</div>
+
+<div id="results" style="display: flex;">
+    <div id="building-floor-table" style="border: 1px solid">
+        <table style="border: 1px solid">
+            <caption>楼层结果</caption>
+            <tr>
+                <th>序号</th>
+                <th>建筑名</th>
+                <th>楼层名</th>
+                <th>查看会议室</th>
+            </tr>
+            <tbody id="building-floor-table-result-body">
+            </tbody>
+        </table>
+    </div>
+
+    <div id="room-table" style="border: 1px solid">
+        <table style="border: 1px solid">
+            <caption>会议室结果</caption>
+            <tr>
+                <th>序号</th>
+                <th>会议室名</th>
+                <th>楼层名</th>
+                <th>人数</th>
+                <th>预定期限</th>
+                <th>查看会议室</th>
+            </tr>
+            <tbody id="room-table-result-body">
+            </tbody>
+        </table>
+    </div>
+
+    <div id="room-book-table" style="border: 1px solid">
+        <table style="border: 1px solid">
+            <caption>会议室预定</caption>
+            <tr>
+                <th>序号</th>
+                <th>areaId</th>
+                <th>会议室名</th>
+                <th>楼层名</th>
+                <th>人数</th>
+                <th>预定期限</th>
+            </tr>
+            <tbody id="room-book-table-result-body">
+            </tbody>
+        </table>
+        <div id="book-choice">
+            <label for="once">单次预定</label><input id="once" type="radio" name="book-option" checked
+                                                 onclick="changeVisible(1)">
+            <label for="timed">多次预定</label><input id="timed" type="radio" name="book-option" onclick="changeVisible(2)">
+
+            <div id="book-once">
+                <a>单次预定</a>
+                <label for="time-once"></label><input id="time-once" type="date">
+
+                <label for="once-hour-begin-select"></label>
+                <select id="once-hour-begin-select">
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                </select>
+                <label for="once-minute-begin-select"></label>
+                <select id="once-minute-begin-select">
+                    <option value="00">00</option>
+                    <option value="30">30</option>
+                </select>
+
+                <label for="once-hour-end-select">-</label>
+                <select id="once-hour-end-select">
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                </select>
+                <label for="once-minute-end-select"></label>
+                <select id="once-minute-end-select">
+                    <option value="00">00</option>
+                    <option value="30">30</option>
+                </select>
+                <button id="book-once-button" onclick="bookOnce()">预定</button>
+            </div>
+
+            <div id="book-timed" style="display: none;">
+                <a>多次预定</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
