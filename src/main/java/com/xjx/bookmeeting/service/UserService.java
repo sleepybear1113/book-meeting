@@ -1,13 +1,12 @@
 package com.xjx.bookmeeting.service;
 
-import com.xjx.bookmeeting.dao.User;
+import com.xjx.bookmeeting.domain.User;
 import com.xjx.bookmeeting.utils.FileUtils;
 import com.xjx.bookmeeting.utils.OtherUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,20 +37,20 @@ public class FileUtils {
             }
         }
 
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path))) {
             bufferedWriter.write(s);
             bufferedWriter.flush();
-            bufferedWriter.close();
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
         }
     }
 
     public static String readFile(String path) {
+        if (!new File(path).exists()) {
+            return null;
+        }
         StringBuilder res = new StringBuilder();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path))) {
             String line = bufferedReader.readLine();
             while (line != null) {
                 res.append(line);

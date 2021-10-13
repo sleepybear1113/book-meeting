@@ -1,5 +1,7 @@
 package com.xjx.bookmeeting.controller;
 
+import com.xjx.bookmeeting.domain.User;
+import com.xjx.bookmeeting.helper.CookieHelper;
 import com.xjx.bookmeeting.logic.UserLogic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,14 @@ public class UserController {
 
     @RequestMapping("/user/login")
     public Boolean login(String username, String password, String authType) {
-        userLogic.login(username, password, authType);
+        User user = userLogic.login(username, password, authType);
+        CookieHelper.writeLoginCookie(user);
         return true;
+    }
+
+    @RequestMapping("/user/getUserInfo")
+    public User getUserInfo() {
+        User user = CookieHelper.getLoginCookie();
+        return userLogic.getUserInfo(user);
     }
 }

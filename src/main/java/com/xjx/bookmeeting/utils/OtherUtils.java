@@ -1,6 +1,7 @@
 package com.xjx.bookmeeting.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 
@@ -10,6 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -78,5 +81,22 @@ public class OtherUtils {
                 }
             }
         }
+    }
+
+    public static String encrypt(String s) {
+        if (StringUtils.isBlank(s)) {
+            return s;
+        }
+
+        byte[] encode = Base64.getEncoder().encode(s.getBytes(StandardCharsets.UTF_8));
+        return new String(encode);
+    }
+
+    public static String decrypt(String s) {
+        if (StringUtils.isBlank(s)) {
+            return s;
+        }
+        byte[] decode = Base64.getDecoder().decode(s);
+        return new String(decode);
     }
 }

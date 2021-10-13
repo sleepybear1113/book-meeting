@@ -1,6 +1,5 @@
-package com.xjx.bookmeeting.dao;
+package com.xjx.bookmeeting.domain;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Data;
 
 import java.io.Serializable;

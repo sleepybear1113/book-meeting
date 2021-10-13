@@ -44,7 +44,6 @@ function testLogin() {
 }
 
 function getAllFloors() {
-    let username = document.getElementById("username").value;
     let areas = document.getElementsByName("area");
     let areaId = 5;
     for (let i = 0; i < areas.length; i++) {
@@ -55,25 +54,10 @@ function getAllFloors() {
         }
     }
 
-    let authType = "corp";
-    if (document.getElementById("mesg").checked === true) {
-        authType = "mesg"
-    } else if (document.getElementById("yixin").checked === true) {
-        authType = "yixin"
-    } else if (document.getElementById("ezxr").checked === true) {
-        authType = "ezxr"
-    }
-
-    if (username == null || username.trim().length === 0) {
-        alert("用户名为空")
-    }
-
     let url = "/room/getAllFloors";
 
     axios.get(url, {
         params: {
-            username: username,
-            authType: authType,
             areaId: areaId
         }
     }).then(res => {
@@ -124,26 +108,7 @@ function getSpareRoom(floorId) {
         return;
     }
 
-    console.log(floor);
-
-
-    let username = document.getElementById("username").value;
-
-    let authType = "corp";
-    if (document.getElementById("mesg").checked === true) {
-        authType = "mesg"
-    } else if (document.getElementById("yixin").checked === true) {
-        authType = "yixin"
-    } else if (document.getElementById("ezxr").checked === true) {
-        authType = "ezxr"
-    }
-
-    if (username == null || username.trim().length === 0) {
-        alert("用户名或密码为空");
-        return;
-    }
-
-    let url = "/room/getSpareRoom?username=" + username + "&authType=" + authType;
+    let url = "/room/getSpareRoom";
     axios.post(url, floor).then(res => {
         // 接口数据
         let data = res.data;
@@ -247,22 +212,6 @@ function changeVisible(type) {
 
 
 function bookOnce() {
-    let username = document.getElementById("username").value;
-
-    let authType = "corp";
-    if (document.getElementById("mesg").checked === true) {
-        authType = "mesg"
-    } else if (document.getElementById("yixin").checked === true) {
-        authType = "yixin"
-    } else if (document.getElementById("ezxr").checked === true) {
-        authType = "ezxr"
-    }
-
-    if (username == null || username.trim().length === 0) {
-        alert("用户名或密码为空");
-        return;
-    }
-
     let day = document.getElementById("time-once").value;
     let hourBegin = document.getElementById("once-hour-begin-select").value;
     let hourEnd = document.getElementById("once-hour-end-select").value;
@@ -270,6 +219,8 @@ function bookOnce() {
     let minuteEnd = document.getElementById("once-minute-end-select").value;
     let roomIdItem = document.getElementById("book-room-id");
     let areaIdItem = document.getElementById("book-area-id");
+
+    let bookOnceMeetingOnce = document.getElementById("book-once-meeting-once").value;
 
     if (day == null || day === "" || roomIdItem == null || areaIdItem === "") {
         alert("输入错误");
@@ -279,15 +230,14 @@ function bookOnce() {
     let url = "/room/bookRoom";
     axios.get(url, {
         params: {
-            username: username,
-            authType: authType,
             day: day,
             hourBegin: hourBegin,
             hourEnd: hourEnd,
             minuteBegin: minuteBegin,
             minuteEnd: minuteEnd,
             roomId: roomIdItem.innerText,
-            areaId: areaIdItem.innerText
+            areaId: areaIdItem.innerText,
+            name: bookOnceMeetingOnce
         }
     }).then(res => {
         // 接口数据

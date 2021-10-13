@@ -22,7 +22,6 @@
     <button onclick="testLogin()">测试登录</button>
 </div>
 
-
 <div id="room-getAllFloors">
     <label for="area-beijing">北京</label><input id="area-beijing" class="authType" type="radio" name="area" value="1"><a>|</a>
     <label for="area-shanghai">上海</label><input id="area-shanghai" class="authType" type="radio" name="area"
@@ -43,7 +42,7 @@
 
 <div id="results" style="display: flex;">
     <div id="building-floor-table" style="border: 1px solid">
-        <table style="border: 1px solid">
+        <table>
             <caption>楼层结果</caption>
             <tr>
                 <th>序号</th>
@@ -57,7 +56,7 @@
     </div>
 
     <div id="room-table" style="border: 1px solid">
-        <table style="border: 1px solid">
+        <table>
             <caption>会议室结果</caption>
             <tr>
                 <th>序号</th>
@@ -73,7 +72,7 @@
     </div>
 
     <div id="room-book-table" style="border: 1px solid">
-        <table style="border: 1px solid">
+        <table>
             <caption>会议室预定</caption>
             <tr>
                 <th>序号</th>
@@ -139,6 +138,8 @@
                     <option value="00">00</option>
                     <option value="30">30</option>
                 </select>
+                <br/>
+                <label for="book-once-meeting-once">会议主题</label><input id="book-once-meeting-once" placeholder="会议">
                 <button id="book-once-button" onclick="bookOnce()">预定</button>
             </div>
 

@@ -1,7 +1,7 @@
 package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.TestLoginValidAction;
-import com.xjx.bookmeeting.dao.User;
+import com.xjx.bookmeeting.domain.User;
 import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.login.MeetingLogin;
 import com.xjx.bookmeeting.login.UserCookieInfo;
@@ -48,6 +48,7 @@ public class UserLogic {
         }
 
         // 重登陆、写信息
+        log.info("cookie 失效，重新登录，username = " + user.getUsername());
         login(user);
         return true;
     }
@@ -58,11 +59,11 @@ public class UserLogic {
         }
 
         if (user.isValid()) {
-            login(user.getUsername(), user.getPassword(), user.getAuthType());
+            login(user.getUsername(), user.withDecryptGetPassword(), user.getAuthType());
         }
     }
 
-    public void login(String username, String password, String authType) {
+    public User login(String username, String password, String authType) {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password) || StringUtils.isBlank(authType)) {
             FrontException.throwCommonFrontException("输入错误");
         }
@@ -82,10 +83,10 @@ public class UserLogic {
             log.info("user " + username + " login success!");
             User user = new User();
             user.setUsername(username);
-            user.setPassword(password);
+            user.withEncryptSetPassword(password);
             user.setAuthType(authType);
             saveUserInfo(user, userCookieInfo);
-            return;
+            return user;
         }
 
         throw FrontException.loginFail();
@@ -113,5 +114,18 @@ public class UserLogic {
 
     public User getUserInfo(User user) {
         return userService.getUserInfo(user);
+    }
+
+    public User getUserInfoWithReLoginAndFrontException(User user) {
+        User userInfo = getUserInfo(user);
+        if (userInfo == null) {
+            FrontException.throwCommonFrontException("本地未有用户信息，请先登录");
+        }
+
+        boolean loginValid = testLoginValidWithReLogin(userInfo);
+        if (!loginValid) {
+            FrontException.throwCommonFrontException("登录失败，请检查用户信息");
+        }
+        return getUserInfo(user);
     }
 }

@@ -1,9 +1,8 @@
-package com.xjx.bookmeeting.dao;
+package com.xjx.bookmeeting.domain;
 
 import com.xjx.bookmeeting.enumeration.AreaTypeEnum;
 import com.xjx.bookmeeting.enumeration.TimeEnum;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -28,6 +27,7 @@ public class BookOnceInfo implements Serializable {
     private String timeEnd;
     private Integer areaId;
     private Long roomId;
+    private String name;
 
     public Long getBookTimestamp() {
         if (year == null || month == null || day == null) {
@@ -42,7 +42,7 @@ public class BookOnceInfo implements Serializable {
     }
 
     public boolean isToday() {
-        if (!isValid()) {
+        if (isInvalid()) {
             return false;
         }
 
@@ -54,7 +54,7 @@ public class BookOnceInfo implements Serializable {
     }
 
     public boolean isAfterDays(int days) {
-        if (!isValid()) {
+        if (isInvalid()) {
             return false;
         }
 
@@ -85,6 +85,10 @@ public class BookOnceInfo implements Serializable {
         }
 
         return getTimeBeginTimeEnum() != null && getTimeEndTimeEnum() != null && getAreaIdEnum() != null;
+    }
+
+    public boolean isInvalid() {
+        return isValid();
     }
 
     @Override

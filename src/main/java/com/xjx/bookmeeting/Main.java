@@ -14,6 +14,7 @@ import com.xjx.bookmeeting.login.MeetingLogin;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.service.UserService;
 import com.xjx.bookmeeting.utils.FileUtils;
+import com.xjx.bookmeeting.utils.OtherUtils;
 import com.xjx.bookmeeting.utils.http.HttpHelper;
 import com.xjx.bookmeeting.utils.http.HttpResponseHelper;
 import com.xjx.bookmeeting.utils.login.UserInfo;
@@ -35,7 +36,15 @@ public class Main {
     public static UserCookieInfo userCookieInfo = new UserCookieInfo(cookie.getValue(), ID);
 
     public static void main(String[] args) {
-        listFiles();
+        base64();
+    }
+
+    public static void base64() {
+        String s = "123zxc123";
+        String encrypt = OtherUtils.encrypt(s);
+        String decrypt = OtherUtils.decrypt(encrypt);
+        System.out.println(encrypt);
+        System.out.println(decrypt);
     }
 
     public static void makeFile() {

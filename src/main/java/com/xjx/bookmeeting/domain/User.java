@@ -1,6 +1,7 @@
-package com.xjx.bookmeeting.dao;
+package com.xjx.bookmeeting.domain;
 
 import com.xjx.bookmeeting.login.UserCookieInfo;
+import com.xjx.bookmeeting.utils.OtherUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -31,13 +32,28 @@ public class User extends BaseDomain implements Serializable {
 
     private List<BookOnceInfo> bookOnceInfoList;
 
+    public void withEncryptSetPassword(String password) {
+        if (StringUtils.isBlank(password)) {
+            this.password = password;
+        } else {
+            this.password = OtherUtils.encrypt(password);
+        }
+    }
+
+    public String withDecryptGetPassword() {
+        if (StringUtils.isBlank(password)) {
+            return password;
+        } else {
+            return OtherUtils.decrypt(password);
+        }
+    }
+
     public boolean isValid() {
         return !StringUtils.isBlank(username) && !StringUtils.isBlank(password) && !StringUtils.isBlank(authType);
     }
 
     public boolean removeExpired() {
-        boolean b = removeExpiredOnceInfoList();
-        return b;
+        return removeExpiredOnceInfoList();
     }
 
     public boolean removeExpiredOnceInfoList() {
@@ -45,7 +61,7 @@ public class User extends BaseDomain implements Serializable {
             return false;
         }
         int size = bookOnceInfoList.size();
-        bookOnceInfoList.removeIf(o -> o == null || !o.isValid() || o.getBookTimestamp() == null || o.getBookTimestamp() + 86400 * 1000 < System.currentTimeMillis());
+        bookOnceInfoList.removeIf(o -> o == null || o.isInvalid() || o.getBookTimestamp() == null || o.getBookTimestamp() + 86400 * 1000 < System.currentTimeMillis());
         return size != bookOnceInfoList.size();
     }
 

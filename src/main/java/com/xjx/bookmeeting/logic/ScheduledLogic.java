@@ -1,13 +1,14 @@
 package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.BookRoomAction;
-import com.xjx.bookmeeting.dao.BookOnceInfo;
-import com.xjx.bookmeeting.dao.User;
+import com.xjx.bookmeeting.domain.BookOnceInfo;
+import com.xjx.bookmeeting.domain.User;
 import com.xjx.bookmeeting.dto.BookRoomResult;
 import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.utils.OtherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +51,6 @@ public class ScheduledLogic {
         user = userLogic.getUserInfo(user);
         String loginIdWeaver = user.getLoginIdWeaver();
 
-
         boolean removeExpired = user.removeExpired();
         if (removeExpired) {
             userLogic.saveUserInfo(user, null);
@@ -72,6 +72,9 @@ public class ScheduledLogic {
             formData.setAreaId(bookOnceInfo.getAreaIdEnum());
             formData.setJoinUserIds(loginIdWeaver);
             formData.setMeetingRoomId(bookOnceInfo.getRoomId());
+            if (StringUtils.isNotBlank(bookOnceInfo.getName())) {
+                formData.setName(bookOnceInfo.getName());
+            }
 
             BookRoomResult book;
             try {
