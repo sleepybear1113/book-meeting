@@ -151,6 +151,7 @@ function fillBookInfo(id) {
     let bookDays = getBookDays(room.bookTime);
     if (bookDays === 0) {
         timeOnce.setAttribute("readOnly", true);
+        timeOnce.value = "";
     } else {
         timeOnce.removeAttribute("readOnly");
     }
