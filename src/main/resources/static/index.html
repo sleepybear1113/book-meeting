@@ -6,7 +6,7 @@
     <script src="lib/axios.min.js"></script>
 </head>
 
-<body>
+<body onload="bodyOnLoad()">
 <script src="js.js"></script>
 
 <div id="div-login" style="border: 1px solid black">
@@ -38,6 +38,21 @@
                                               value="15"><a>|</a>
 
     <button onclick="getAllFloors()">获取全部楼层</button>
+</div>
+
+<div id="booked-rooms" style="border: 1px solid; display: flex">
+    <table id="booked-rooms-table">
+        <caption>预定列表</caption>
+        <tr>
+            <th>id</th>
+            <th>会议室</th>
+            <th>主题</th>
+            <th>时间</th>
+            <th>操作</th>
+        </tr>
+        <tbody id="booked-rooms-table-result-body">
+        </tbody>
+    </table>
 </div>
 
 <div id="results" style="display: flex;">

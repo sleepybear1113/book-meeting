@@ -1,6 +1,73 @@
 let floors = {};
 let rooms = {};
 
+function bodyOnLoad() {
+    let url = "/user/getUserInfo";
+    axios.get(url).then(res => {
+        // 接口数据
+        let data = res.data;
+        console.log(data);
+        if (!processErrorResult(data)) {
+            return;
+        }
+
+        let result = data.result;
+        if (result == null) {
+            return;
+        }
+        document.getElementById("username").value = result.username;
+        let authType = result.authType;
+        if (authType != null) {
+            document.getElementById(authType).checked = true;
+        }
+        console.log(result);
+        fillBookedInfo(result.bookOnceInfoList);
+    });
+}
+
+function fillBookedInfo(BookOnceInfos) {
+    if (BookOnceInfos == null) {
+        return;
+    }
+
+    let bookedRoomTableResult = document.getElementById("booked-rooms-table-result-body");
+    let html = "";
+    for (let i = 0; i < BookOnceInfos.length; i++) {
+        let BookOnceInfo = BookOnceInfos[i];
+        html += `
+        <tr>
+            <th style="border: 1px solid">${BookOnceInfo.id}</th>
+            <th style="border: 1px solid">${BookOnceInfo.roomName}</th>
+            <th style="border: 1px solid">${BookOnceInfo.meetingName || "会议"}</th>
+            <th style="border: 1px solid">${BookOnceInfo.year}-${BookOnceInfo.month}-${BookOnceInfo.day} ${BookOnceInfo.timeBegin}-${BookOnceInfo.timeEnd}</th>
+            <th><button onclick="cancelBookRoom(${BookOnceInfo.id})">取消</button></th>
+        </tr>`;
+    }
+    bookedRoomTableResult.innerHTML = html;
+}
+
+function cancelBookRoom(id) {
+    let url = "/room/cancelBookRoom";
+    axios.get(url, {
+        params: {
+            id: id
+        }
+    }).then(res => {
+        // 接口数据
+        let data = res.data;
+        console.log(data);
+        if (!processErrorResult(data)) {
+            return;
+        }
+
+        if (data.result) {
+            bodyOnLoad();
+        } else {
+            alert("失败");
+        }
+    });
+}
+
 function testLogin() {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
@@ -172,8 +239,8 @@ function fillBookInfo(id) {
             <tr>
                 <th id="book-room-id">${room.id}</th>
                 <th id="book-area-id">${room.areaId}</th>
-                <th>${room.roomName}</th>
-                <th>${room.floorName}</th>
+                <th id="book-room-name">${room.roomName}</th>
+                <th id="book-room-floor-name">${room.floorName}</th>
                 <th>${room.roomNumPeople}</th>
                 <th>${room.bookTime}</th>
             </tr>`;
@@ -220,7 +287,8 @@ function bookOnce() {
     let minuteEnd = document.getElementById("once-minute-end-select").value;
     let roomIdItem = document.getElementById("book-room-id");
     let areaIdItem = document.getElementById("book-area-id");
-
+    let bookRoomName = document.getElementById("book-room-name").innerText;
+    let bookRoomFloorName = document.getElementById("book-room-floor-name").innerText;
     let bookOnceMeetingOnce = document.getElementById("book-once-meeting-once").value;
 
     if (day == null || day === "" || roomIdItem == null || areaIdItem === "") {
@@ -238,7 +306,8 @@ function bookOnce() {
             minuteEnd: minuteEnd,
             roomId: roomIdItem.innerText,
             areaId: areaIdItem.innerText,
-            name: bookOnceMeetingOnce
+            meetingName: bookOnceMeetingOnce,
+            roomName: bookRoomFloorName + bookRoomName
         }
     }).then(res => {
         // 接口数据
@@ -251,6 +320,7 @@ function bookOnce() {
         let result = data.result;
         if (result) {
             alert("成功");
+            bodyOnLoad();
         } else {
             alert("失败");
         }

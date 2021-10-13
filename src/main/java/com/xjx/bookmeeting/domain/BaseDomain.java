@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class BaseDomain implements Serializable {
     private static final long serialVersionUID = -8465232923281938510L;
 
+    private Long id;
     private Long createTime;
     private Long modifyTime;
 

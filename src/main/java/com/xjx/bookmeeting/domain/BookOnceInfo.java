@@ -16,7 +16,7 @@ import java.util.Objects;
  * @date 2021/10/9 23:53
  */
 @Data
-public class BookOnceInfo implements Serializable {
+public class BookOnceInfo extends BaseDomain implements Serializable {
     private static final long serialVersionUID = 1777036795428134524L;
     private static final Calendar CALENDAR = Calendar.getInstance();
 
@@ -27,7 +27,8 @@ public class BookOnceInfo implements Serializable {
     private String timeEnd;
     private Integer areaId;
     private Long roomId;
-    private String name;
+    private String meetingName;
+    private String roomName;
 
     public Long getBookTimestamp() {
         if (year == null || month == null || day == null) {

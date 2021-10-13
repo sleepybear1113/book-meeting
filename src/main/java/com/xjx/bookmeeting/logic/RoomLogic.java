@@ -57,7 +57,7 @@ public class RoomLogic {
         return GetSpareRoomAction.getRooms(query, new UserCookieInfo(userInfo.getCookie(), userInfo.getLoginIdWeaver()));
     }
 
-    public Boolean bookRoom(User user, String dayString, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String name) {
+    public Boolean bookRoom(User user, String dayString, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName) {
         if (StringUtils.isBlank(user.getUsername()) || StringUtils.isBlank(dayString) || StringUtils.isBlank(hourBegin) || StringUtils.isBlank(hourEnd) || StringUtils.isBlank(minuteBegin) || StringUtils.isBlank(minuteEnd) || roomId == null || areaId == null) {
             FrontException.throwCommonFrontException("参数错误");
         }
@@ -100,14 +100,41 @@ public class RoomLogic {
         add.setTimeEnd(timeEnd);
         add.setRoomId(roomId);
         add.setAreaId(areaId);
-        if (StringUtils.isNotBlank(name)) {
-            add.setName(name);
+        add.setId(System.currentTimeMillis());
+        add.setRoomName(roomName);
+        add.fillAllTime();
+        if (StringUtils.isNotBlank(meetingName)) {
+            add.setMeetingName(meetingName);
         }
         if (bookOnceInfoList.contains(add)) {
             FrontException.throwCommonFrontException("预约信息重复");
         }
         bookOnceInfoList.add(add);
 
+        userLogic.saveUserInfo(userInfo, null);
+        return true;
+    }
+
+    public Boolean cancelBookRoom(User user, Long id) {
+        if (id == null) {
+            FrontException.throwCommonFrontException("输入错误");
+        }
+        User userInfo = userLogic.getUserInfo(user);
+        if (userInfo == null) {
+            FrontException.throwCommonFrontException("本地用户信息不存在");
+        }
+        List<BookOnceInfo> bookOnceInfoList = userInfo.getBookOnceInfoList();
+        if (CollectionUtils.isEmpty(bookOnceInfoList)) {
+            FrontException.throwCommonFrontException("无对应此 id");
+        }
+
+        int size = bookOnceInfoList.size();
+        bookOnceInfoList.removeIf(b -> id.equals(b.getId()));
+        if (size <= bookOnceInfoList.size()) {
+            FrontException.throwCommonFrontException("无对应此 id");
+        }
+
+        userInfo.setBookOnceInfoList(bookOnceInfoList);
         userLogic.saveUserInfo(userInfo, null);
         return true;
     }

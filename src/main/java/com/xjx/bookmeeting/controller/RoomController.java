@@ -38,8 +38,14 @@ public class RoomController {
     }
 
     @RequestMapping("/room/bookRoom")
-    public Boolean bookRoom(String day, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String name) {
+    public Boolean bookRoom(String day, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName) {
         User user = CookieHelper.getLoginCookieWithFrontException();
-        return roomLogic.bookRoom(user, day, hourBegin, hourEnd, minuteBegin, minuteEnd, roomId, areaId, name);
+        return roomLogic.bookRoom(user, day, hourBegin, hourEnd, minuteBegin, minuteEnd, roomId, areaId, meetingName, roomName);
+    }
+
+    @RequestMapping("/room/cancelBookRoom")
+    public Boolean cancelBookRoom(Long id) {
+        User user = CookieHelper.getLoginCookieWithFrontException();
+        return roomLogic.cancelBookRoom(user, id);
     }
 }

@@ -72,8 +72,8 @@ public class ScheduledLogic {
             formData.setAreaId(bookOnceInfo.getAreaIdEnum());
             formData.setJoinUserIds(loginIdWeaver);
             formData.setMeetingRoomId(bookOnceInfo.getRoomId());
-            if (StringUtils.isNotBlank(bookOnceInfo.getName())) {
-                formData.setName(bookOnceInfo.getName());
+            if (StringUtils.isNotBlank(bookOnceInfo.getMeetingName())) {
+                formData.setName(bookOnceInfo.getMeetingName());
             }
 
             BookRoomResult book;

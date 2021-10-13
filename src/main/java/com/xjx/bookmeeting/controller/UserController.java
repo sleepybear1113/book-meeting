@@ -30,6 +30,9 @@ public class UserController {
     @RequestMapping("/user/getUserInfo")
     public User getUserInfo() {
         User user = CookieHelper.getLoginCookie();
+        if (user == null) {
+            return null;
+        }
         return userLogic.getUserInfo(user);
     }
 }

@@ -5,3 +5,7 @@
 table {
     border: 1px solid;
 }
+
+.booked-rooms-table-result-body-tr {
+    border: black 1px solid;
+}
