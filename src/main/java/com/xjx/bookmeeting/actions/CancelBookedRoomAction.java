@@ -1,10 +1,9 @@
 package com.xjx.bookmeeting.actions;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 /**
- * there is introduction
+ * 取消预定相关逻辑类
  *
  * @author XJX
  * @date 2021/9/14 15:35

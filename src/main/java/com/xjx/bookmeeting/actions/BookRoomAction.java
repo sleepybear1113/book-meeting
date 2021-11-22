@@ -18,7 +18,7 @@ import org.apache.http.entity.ContentType;
 import java.util.Calendar;
 
 /**
- * there is introduction
+ * 会议室预定相关操作逻辑类
  *
  * @author XJX
  * @date 2021/9/14 9:56
@@ -38,7 +38,6 @@ public class BookRoomAction {
         httpHelper.setUa(LoginConstant.UA);
         String body = formData.getFormData();
         if (body == null) {
-            System.out.println("body is null");
             return null;
         }
         httpHelper.setPostBody(body, ContentType.APPLICATION_FORM_URLENCODED);

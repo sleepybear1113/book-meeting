@@ -1,5 +1,6 @@
 package com.xjx.bookmeeting.domain;
 
+import com.xjx.bookmeeting.enumeration.CanBookEnum;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.utils.OtherUtils;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class User extends BaseDomain implements Serializable {
     private String cookie;
     private String loginIdWeaver;
 
-    private List<BookOnceInfo> bookOnceInfoList;
+    private List<BookMeetingInfo> bookMeetingInfoList;
 
     public void withEncryptSetPassword(String password) {
         if (StringUtils.isBlank(password)) {
@@ -41,35 +42,31 @@ public class User extends BaseDomain implements Serializable {
     }
 
     public String withDecryptGetPassword() {
-        if (StringUtils.isBlank(password)) {
-            return password;
+        if (StringUtils.isBlank(this.password)) {
+            return this.password;
         } else {
-            return OtherUtils.decrypt(password);
+            return OtherUtils.decrypt(this.password);
         }
     }
 
     public boolean isValid() {
-        return !StringUtils.isBlank(username) && !StringUtils.isBlank(password) && !StringUtils.isBlank(authType);
+        return !StringUtils.isBlank(this.username) && !StringUtils.isBlank(this.password) && !StringUtils.isBlank(this.authType);
     }
 
     public boolean removeExpired() {
-        return removeExpiredOnceInfoList();
-    }
-
-    public boolean removeExpiredOnceInfoList() {
-        if (CollectionUtils.isEmpty(bookOnceInfoList)) {
+        if (CollectionUtils.isEmpty(this.bookMeetingInfoList)) {
             return false;
         }
-        int size = bookOnceInfoList.size();
-        bookOnceInfoList.removeIf(o -> o == null || o.isInvalid() || o.getBookTimestamp() == null || o.getBookTimestamp() + 86400 * 1000 < System.currentTimeMillis());
-        return size != bookOnceInfoList.size();
+        int size = this.bookMeetingInfoList.size();
+        this.bookMeetingInfoList.removeIf(o -> o == null || o.isInvalid() || CanBookEnum.isExpire(o.canBook()));
+        return size != this.bookMeetingInfoList.size();
     }
 
     public UserCookieInfo getUserCookieInfo() {
-        if (StringUtils.isBlank(cookie) || StringUtils.isBlank(loginIdWeaver)) {
+        if (StringUtils.isBlank(this.cookie) || StringUtils.isBlank(this.loginIdWeaver)) {
             return null;
         }
 
-        return new UserCookieInfo(cookie, loginIdWeaver);
+        return new UserCookieInfo(this.cookie, this.loginIdWeaver);
     }
 }

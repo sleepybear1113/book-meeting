@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * there is introduction
+ * 将信息、异常封装格式给前端接口
  *
  * @author xjx
  * @date 2021/10/7 14:44

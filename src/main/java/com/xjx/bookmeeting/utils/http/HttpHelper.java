@@ -1,7 +1,6 @@
 package com.xjx.bookmeeting.utils.http;
 
 import com.xjx.bookmeeting.utils.http.enumeration.MethodEnum;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.Header;

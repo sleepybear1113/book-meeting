@@ -20,9 +20,9 @@ public class CookieHelper {
     public static final String COOKIE_NAME_AUTH_TYPE = "authType";
 
     /**
-     * 2 周
+     * 最大时间
      */
-    public static final int COOKIE_MAX_AGE = 2 * 7 * 24 * 3600;
+    public static final int COOKIE_MAX_AGE = Integer.MAX_VALUE;
 
     /**
      * 获取到 user 后对浏览器进行写 cookie

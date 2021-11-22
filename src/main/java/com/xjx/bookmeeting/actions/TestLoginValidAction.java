@@ -1,6 +1,5 @@
 package com.xjx.bookmeeting.actions;
 
-import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.utils.http.HttpHelper;
 import com.xjx.bookmeeting.utils.http.HttpResponseHelper;
@@ -35,7 +34,6 @@ public class TestLoginValidAction {
         httpHelper.setUa(LoginConstant.UA);
         HttpResponseHelper response = httpHelper.request();
         String responseBody = response.getResponseBody();
-        System.out.println(responseBody);
         if (StringUtils.isNotBlank(responseBody)) {
             return responseBody.contains(SUCCESS_FETCH);
         }

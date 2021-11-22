@@ -6,6 +6,7 @@ import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.login.MeetingLogin;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.service.UserService;
+import com.xjx.bookmeeting.utils.OtherUtils;
 import com.xjx.bookmeeting.utils.login.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,7 @@ public class UserLogic {
     public boolean testLoginValidWithReLogin(User user) {
         boolean loginValid = testLoginValid(user);
         if (loginValid) {
+            log.info(user.getUsername() + " 登录信息有效");
             // 登录信息仍有效
             return true;
         }
@@ -85,7 +87,13 @@ public class UserLogic {
             user.setUsername(username);
             user.withEncryptSetPassword(password);
             user.setAuthType(authType);
-            saveUserInfo(user, userCookieInfo);
+            User existUser = getUserInfo(user);
+            if (existUser == null) {
+                saveUserInfo(user, userCookieInfo);
+            } else {
+                OtherUtils.copyNoNullProperties(user, existUser);
+                saveUserInfo(existUser, userCookieInfo);
+            }
             return user;
         }
 
@@ -127,5 +135,9 @@ public class UserLogic {
             FrontException.throwCommonFrontException("登录失败，请检查用户信息");
         }
         return getUserInfo(user);
+    }
+
+    public boolean deleteUser(User user) {
+        return userService.deleteLocalUser(user);
     }
 }

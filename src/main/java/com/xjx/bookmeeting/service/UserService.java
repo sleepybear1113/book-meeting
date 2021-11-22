@@ -48,6 +48,15 @@ public class UserService {
         return FileUtils.readFile(filePath, User.class);
     }
 
+    public boolean deleteLocalUser(User user) {
+        if (user == null) {
+            return false;
+        }
+
+        String filePath = getFilePath(user.getUsername(), user.getAuthType());
+        return FileUtils.deleteFile(filePath);
+    }
+
     private String getFilePath(String username, String authType) {
         return USER_PATH + username + "-" + authType + ".json";
     }

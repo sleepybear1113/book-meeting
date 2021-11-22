@@ -1,9 +1,10 @@
 package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.BookRoomAction;
-import com.xjx.bookmeeting.domain.BookOnceInfo;
+import com.xjx.bookmeeting.domain.BookMeetingInfo;
 import com.xjx.bookmeeting.domain.User;
 import com.xjx.bookmeeting.dto.BookRoomResult;
+import com.xjx.bookmeeting.enumeration.CanBookEnum;
 import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.utils.OtherUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,12 @@ public class ScheduledLogic {
         if (CollectionUtils.isEmpty(allUsers)) {
             return;
         }
-        for (User allUser : allUsers) {
-            bookOnceInSchedule(allUser);
+        for (User user : allUsers) {
+            try {
+                bookOnceInSchedule(user);
+            } catch (Exception e) {
+                log.warn("用户" + user.getUsername() + "预定失败");
+            }
             OtherUtils.sleep(2000);
         }
     }
@@ -55,38 +60,38 @@ public class ScheduledLogic {
         if (removeExpired) {
             userLogic.saveUserInfo(user, null);
         }
-        List<BookOnceInfo> bookOnceInfoList = user.getBookOnceInfoList();
-        if (CollectionUtils.isEmpty(bookOnceInfoList)) {
+        List<BookMeetingInfo> bookMeetingInfoList = user.getBookMeetingInfoList();
+        if (CollectionUtils.isEmpty(bookMeetingInfoList)) {
             return;
         }
 
         log.info("开始进行预定，用户：" + user.getUsername());
-        for (BookOnceInfo bookOnceInfo : bookOnceInfoList) {
-            if (!bookOnceInfo.isAfterDays(7)) {
+        for (BookMeetingInfo bookMeetingInfo : bookMeetingInfoList) {
+            if (bookMeetingInfo == null) {
+                continue;
+            }
+            if (!CanBookEnum.CAN_BOOK.equals(bookMeetingInfo.canBook())) {
                 continue;
             }
             OtherUtils.sleep(2000);
 
             BookRoomAction.FormData formData = new BookRoomAction.FormData();
-            formData.setTimeRange(bookOnceInfo.getYear(), bookOnceInfo.getMonth(), bookOnceInfo.getDay(), bookOnceInfo.getTimeBeginTimeEnum(), bookOnceInfo.getTimeEndTimeEnum());
-            formData.setAreaId(bookOnceInfo.getAreaIdEnum());
+            formData.setTimeRange(bookMeetingInfo.getYear(), bookMeetingInfo.getMonth(), bookMeetingInfo.getDay(), bookMeetingInfo.getTimeBeginTimeEnum(), bookMeetingInfo.getTimeEndTimeEnum());
+            formData.setAreaId(bookMeetingInfo.getAreaIdEnum());
             formData.setJoinUserIds(loginIdWeaver);
-            formData.setMeetingRoomId(bookOnceInfo.getRoomId());
-            if (StringUtils.isNotBlank(bookOnceInfo.getMeetingName())) {
-                formData.setName(bookOnceInfo.getMeetingName());
+            formData.setMeetingRoomId(bookMeetingInfo.getRoomId());
+            if (StringUtils.isNotBlank(bookMeetingInfo.getMeetingName())) {
+                formData.setName(bookMeetingInfo.getMeetingName());
             }
 
-            BookRoomResult book;
             try {
-                book = BookRoomAction.book(user.getUserCookieInfo(), formData);
+                BookRoomResult book = BookRoomAction.book(user.getUserCookieInfo(), formData);
+                log.info(book.toString());
             } catch (FrontException e) {
                 log.info(e.getMessage());
-                continue;
             } catch (Exception e) {
                 log.info(e.getMessage(), e);
-                continue;
             }
-            log.info(book.toString());
         }
         log.info("===============");
     }

@@ -2,7 +2,7 @@ package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.GetFloorAction;
 import com.xjx.bookmeeting.actions.GetSpareRoomAction;
-import com.xjx.bookmeeting.domain.BookOnceInfo;
+import com.xjx.bookmeeting.domain.BookMeetingInfo;
 import com.xjx.bookmeeting.domain.User;
 import com.xjx.bookmeeting.dto.Floor;
 import com.xjx.bookmeeting.dto.Room;
@@ -10,6 +10,7 @@ import com.xjx.bookmeeting.enumeration.AreaTypeEnum;
 import com.xjx.bookmeeting.enumeration.TimeEnum;
 import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.login.UserCookieInfo;
+import com.xjx.bookmeeting.utils.OtherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,13 +58,27 @@ public class RoomLogic {
         return GetSpareRoomAction.getRooms(query, new UserCookieInfo(userInfo.getCookie(), userInfo.getLoginIdWeaver()));
     }
 
-    public Boolean bookRoom(User user, String dayString, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName) {
-        if (StringUtils.isBlank(user.getUsername()) || StringUtils.isBlank(dayString) || StringUtils.isBlank(hourBegin) || StringUtils.isBlank(hourEnd) || StringUtils.isBlank(minuteBegin) || StringUtils.isBlank(minuteEnd) || roomId == null || areaId == null) {
+    public Boolean bookRoom(User user, String dayString, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName, String bookTime, String weekStrings) {
+        if (StringUtils.isBlank(user.getUsername()) || roomId == null || areaId == null || StringUtils.isBlank(bookTime)) {
             FrontException.throwCommonFrontException("参数错误");
         }
 
+        // 包含至少一个 null 或者全是非 null 数字
+        List<Integer> weeks = BookMeetingInfo.weekToList(weekStrings);
+        if (StringUtils.isBlank(weekStrings)) {
+            if (StringUtils.isBlank(dayString) || StringUtils.isBlank(hourBegin) || StringUtils.isBlank(hourEnd) || StringUtils.isBlank(minuteBegin) || StringUtils.isBlank(minuteEnd)) {
+                FrontException.throwCommonFrontException("参数错误");
+            }
+        } else {
+            if (!BookMeetingInfo.isWeekStringValid(weekStrings)) {
+                FrontException.throwCommonFrontException("参数错误");
+            }
+            dayString = "0-0-0";
+        }
+
         String[] days = dayString.split("-");
-        if (days.length != 3) {
+        int length = 3;
+        if (days.length != length) {
             FrontException.throwCommonFrontException("日期格式错误");
         }
         int year = Integer.parseInt(days[0]);
@@ -87,29 +102,36 @@ public class RoomLogic {
         }
 
         User userInfo = userLogic.getUserInfoWithReLoginAndFrontException(user);
-        List<BookOnceInfo> bookOnceInfoList = userInfo.getBookOnceInfoList();
-        if (CollectionUtils.isEmpty(bookOnceInfoList)) {
-            bookOnceInfoList = new ArrayList<>();
-            userInfo.setBookOnceInfoList(bookOnceInfoList);
+        List<BookMeetingInfo> bookMeetingInfoList = userInfo.getBookMeetingInfoList();
+        if (CollectionUtils.isEmpty(bookMeetingInfoList)) {
+            bookMeetingInfoList = new ArrayList<>();
+            userInfo.setBookMeetingInfoList(bookMeetingInfoList);
         }
-        BookOnceInfo add = new BookOnceInfo();
-        add.setYear(year);
-        add.setMonth(month);
-        add.setDay(day);
-        add.setTimeBegin(timeBegin);
-        add.setTimeEnd(timeEnd);
-        add.setRoomId(roomId);
-        add.setAreaId(areaId);
-        add.setId(System.currentTimeMillis());
-        add.setRoomName(roomName);
-        add.fillAllTime();
-        if (StringUtils.isNotBlank(meetingName)) {
-            add.setMeetingName(meetingName);
+
+        for (Integer week : weeks) {
+            BookMeetingInfo add = new BookMeetingInfo();
+            add.setYear(year);
+            add.setMonth(month);
+            add.setDay(day);
+            add.setTimeBegin(timeBegin);
+            add.setTimeEnd(timeEnd);
+            add.setRoomId(roomId);
+            add.setAreaId(areaId);
+            add.setId(System.currentTimeMillis());
+            add.setRoomName(roomName);
+            add.setBookTime(bookTime);
+            add.setWeek(week);
+            add.fillAllTime();
+            if (StringUtils.isNotBlank(meetingName)) {
+                add.setMeetingName(meetingName);
+            }
+            if (bookMeetingInfoList.contains(add)) {
+                FrontException.throwCommonFrontException("预约信息重复");
+            }
+            bookMeetingInfoList.add(add);
+
+            OtherUtils.sleep(10L);
         }
-        if (bookOnceInfoList.contains(add)) {
-            FrontException.throwCommonFrontException("预约信息重复");
-        }
-        bookOnceInfoList.add(add);
 
         userLogic.saveUserInfo(userInfo, null);
         return true;
@@ -123,18 +145,18 @@ public class RoomLogic {
         if (userInfo == null) {
             FrontException.throwCommonFrontException("本地用户信息不存在");
         }
-        List<BookOnceInfo> bookOnceInfoList = userInfo.getBookOnceInfoList();
-        if (CollectionUtils.isEmpty(bookOnceInfoList)) {
+        List<BookMeetingInfo> bookMeetingInfoList = userInfo.getBookMeetingInfoList();
+        if (CollectionUtils.isEmpty(bookMeetingInfoList)) {
             FrontException.throwCommonFrontException("无对应此 id");
         }
 
-        int size = bookOnceInfoList.size();
-        bookOnceInfoList.removeIf(b -> id.equals(b.getId()));
-        if (size <= bookOnceInfoList.size()) {
+        int size = bookMeetingInfoList.size();
+        bookMeetingInfoList.removeIf(b -> id.equals(b.getId()));
+        if (size <= bookMeetingInfoList.size()) {
             FrontException.throwCommonFrontException("无对应此 id");
         }
 
-        userInfo.setBookOnceInfoList(bookOnceInfoList);
+        userInfo.setBookMeetingInfoList(bookMeetingInfoList);
         userLogic.saveUserInfo(userInfo, null);
         return true;
     }

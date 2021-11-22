@@ -16,6 +16,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class BookRoomResult extends MeetingResponse<String> {
     private static final long serialVersionUID = 1171595966979555115L;
+    public static final String SUCCESS_STRING = "true";
 
     private Long meetingId;
     private Integer isConflict;
@@ -25,7 +26,7 @@ public class BookRoomResult extends MeetingResponse<String> {
             throw new FrontException("预定结果为 null");
 
         }
-        if ("true".equals(bookRoomResult.getResultType())) {
+        if (SUCCESS_STRING.equals(bookRoomResult.getResultType())) {
             return true;
         }
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class FileUtils {
             }
         }
 
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8))) {
             bufferedWriter.write(s);
             bufferedWriter.flush();
         } catch (IOException e) {
@@ -46,11 +47,12 @@ public class FileUtils {
     }
 
     public static String readFile(String path) {
-        if (!new File(path).exists()) {
+        File file = new File(path);
+        if (!file.exists()) {
             return null;
         }
         StringBuilder res = new StringBuilder();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8))) {
             String line = bufferedReader.readLine();
             while (line != null) {
                 res.append(line);
@@ -82,5 +84,14 @@ public class FileUtils {
             res.add(f.getPath());
         }
         return res;
+    }
+
+    public static boolean deleteFile(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            return false;
+        }
+
+        return file.delete();
     }
 }

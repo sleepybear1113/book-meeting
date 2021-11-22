@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * there is introduction
+ * 获取会议室预定情况逻辑类
  *
  * @author XJX
  * @date 2021/9/2 1:58

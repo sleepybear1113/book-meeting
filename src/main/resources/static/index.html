@@ -6,8 +6,10 @@
     <script src="lib/axios.min.js"></script>
 </head>
 
-<body onload="bodyOnLoad()">
-<script src="js.js"></script>
+<body onload="initUserInfo()">
+<script src="js/objects.js"></script>
+<script src="js/http.js"></script>
+<script src="js/js.js"></script>
 
 <div id="div-login" style="border: 1px solid black">
     <label for="username">用户名：</label><input id="username">
@@ -20,6 +22,7 @@
     <label for="ezxr">易现账号</label><input id="ezxr" class="authType" type="radio" name="authType">
     <br/>
     <button onclick="testLogin()">测试登录</button>
+    <button onclick="deleteUserConfirm()">删除当前用户本地数据</button>
 </div>
 
 <div id="room-getAllFloors">
@@ -100,19 +103,55 @@
             <tbody id="room-book-table-result-body">
             </tbody>
         </table>
+        <hr/>
         <div id="book-choice">
-            <label for="once">单次预定</label><input id="once" type="radio" name="book-option" checked
-                                                 onclick="changeVisible(1)">
-            <label for="timed">多次预定</label><input id="timed" type="radio" name="book-option" onclick="changeVisible(2)">
+            <div>
+                <div id="book-once">
+                    <label for="once"><input id="once" type="radio" name="book-option">单次预定</label>
+                    <label for="time-once"></label><input id="time-once" type="date" onclick="switchToOnce()">
+                </div>
+                <div id="book-annual">
+                    <label for="annual"><input id="annual" type="radio" name="book-option" checked>周期预定</label>
+                    <label>
+                        <input type="checkbox" name="book-annual-check-box" value="1" onclick="switchToAnnual()">
+                        一
+                    </label>
+                    <a>|</a>
+                    <label>
+                        <input type="checkbox" name="book-annual-check-box" value="2" onclick="switchToAnnual()">
+                        二
+                    </label>
+                    <a>|</a>
+                    <label>
+                        <input type="checkbox" name="book-annual-check-box" value="3" onclick="switchToAnnual()">
+                        三
+                    </label>
+                    <a>|</a>
+                    <label>
+                        <input type="checkbox" name="book-annual-check-box" value="4" onclick="switchToAnnual()">
+                        四
+                    </label>
+                    <a>|</a>
+                    <label>
+                        <input type="checkbox" name="book-annual-check-box" value="5" onclick="switchToAnnual()">
+                        五
+                    </label>
+                    <a>|</a>
+                    <label>
+                        <input type="checkbox" name="book-annual-check-box" value="6" onclick="switchToAnnual()">
+                        六
+                    </label>
+                    <a>|</a>
+                    <label>
+                        <input type="checkbox" name="book-annual-check-box" value="7" onclick="switchToAnnual()">
+                        日
+                    </label>
+                </div>
 
-            <div id="book-once">
-                <a>单次预定</a>
-                <label for="time-once"></label><input id="time-once" type="date">
-
-                <label for="once-hour-begin-select"></label>
+                <label for="once-hour-begin-select">　时间选择</label>
                 <select id="once-hour-begin-select">
                     <option value="09">09</option>
-                    <option value="10">10</option>
+                    <option value="10" selected>10</option>
                     <option value="11">11</option>
                     <option value="12">12</option>
                     <option value="13">13</option>
@@ -136,7 +175,7 @@
                 <select id="once-hour-end-select">
                     <option value="10">10</option>
                     <option value="11">11</option>
-                    <option value="12">12</option>
+                    <option value="12" selected>12</option>
                     <option value="13">13</option>
                     <option value="14">14</option>
                     <option value="15">15</option>
@@ -154,8 +193,8 @@
                     <option value="30">30</option>
                 </select>
                 <br/>
-                <label for="book-once-meeting-once">会议主题</label><input id="book-once-meeting-once" placeholder="会议">
-                <button id="book-once-button" onclick="bookOnce()">预定</button>
+                <label for="book-once-meeting-once">会议主题</label><input id="book-once-meeting-once" placeholder="选填">
+                <button id="book-once-button" onclick="bookRoom()">预定</button>
             </div>
 
             <div id="book-timed" style="display: none;">

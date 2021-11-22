@@ -35,4 +35,10 @@ public class UserController {
         }
         return userLogic.getUserInfo(user);
     }
+
+    @RequestMapping("/user/deleteUser")
+    public Boolean deleteUser() {
+        User user = CookieHelper.getLoginCookieWithFrontException();
+        return userLogic.deleteUser(user);
+    }
 }

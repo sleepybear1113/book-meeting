@@ -9,13 +9,12 @@ import com.xjx.bookmeeting.utils.http.HttpHelper;
 import com.xjx.bookmeeting.utils.http.HttpResponseHelper;
 import com.xjx.bookmeeting.utils.login.LoginConstant;
 import lombok.Data;
-import org.apache.http.cookie.Cookie;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * there is introduction
+ * 获取某个楼层会议室相关逻辑类
  *
  * @author XJX
  * @date 2021/8/31 1:47

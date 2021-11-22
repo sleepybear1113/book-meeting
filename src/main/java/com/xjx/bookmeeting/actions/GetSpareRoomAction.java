@@ -11,7 +11,6 @@ import com.xjx.bookmeeting.utils.login.LoginConstant;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.cookie.Cookie;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * there is introduction
+ * 获取某个楼层的会议室
  *
  * @author XJX
  * @date 2021/8/31 1:45
