@@ -100,4 +100,5 @@ function BookOnceInfo(o) {
     this.meetingName = o.meetingName;
     this.roomName = o.roomName;
     this.week = o.week;
+    this.autoSignIn = o.autoSignIn;
 }

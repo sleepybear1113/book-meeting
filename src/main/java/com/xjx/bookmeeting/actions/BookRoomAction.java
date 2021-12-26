@@ -11,6 +11,7 @@ import com.xjx.bookmeeting.utils.http.HttpResponseHelper;
 import com.xjx.bookmeeting.utils.http.enumeration.MethodEnum;
 import com.xjx.bookmeeting.utils.login.LoginConstant;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.ContentType;
@@ -23,6 +24,7 @@ import java.util.Calendar;
  * @author XJX
  * @date 2021/9/14 9:56
  */
+@Slf4j
 public class BookRoomAction {
     public static final String URL = "https://meeting.oa.netease.com/service/meetingNew/getmeetingOperation.jsp";
 

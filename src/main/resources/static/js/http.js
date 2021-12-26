@@ -149,6 +149,7 @@ function bookRoom() {
     let bookOnceMeetingOnce = document.getElementById("book-once-meeting-once").value;
     let bookTime = document.getElementById("book-time").innerText;
     let annualChecked = document.getElementById("annual").checked;
+    let autoSignIn = document.getElementById("auto-sign-in-checkbox").checked;
 
     let weekOptions = getWeeks();
     if (annualChecked) {
@@ -177,7 +178,8 @@ function bookRoom() {
             meetingName: bookOnceMeetingOnce,
             roomName: bookRoomFloorName + bookRoomName,
             bookTime: bookTime,
-            weeks: weekOptions
+            weeks: weekOptions,
+            autoSignIn: autoSignIn
         }
     }).then(res => {
         let response = res.data;

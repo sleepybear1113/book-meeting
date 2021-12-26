@@ -7,6 +7,7 @@ import com.xjx.bookmeeting.login.MeetingLogin;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.service.UserService;
 import com.xjx.bookmeeting.utils.OtherUtils;
+import com.xjx.bookmeeting.utils.login.AuthTypeEnum;
 import com.xjx.bookmeeting.utils.login.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -69,7 +70,7 @@ public class UserLogic {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password) || StringUtils.isBlank(authType)) {
             FrontException.throwCommonFrontException("输入错误");
         }
-        UserInfo.AuthTypeEnum authTypeEnum = UserInfo.AuthTypeEnum.getAuthTypeEnum(authType);
+        AuthTypeEnum authTypeEnum = AuthTypeEnum.getAuthTypeEnum(authType);
         if (authTypeEnum == null) {
             FrontException.throwCommonFrontException("认证方式错误");
         }

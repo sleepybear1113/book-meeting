@@ -38,46 +38,9 @@ public class UserInfo implements Serializable {
         return String.format(bodyFormat, this.authType.getAuthType(), this.trustRoot, this.corpId, this.corpPw);
     }
 
-    /**
-     * 认证类型枚举
-     */
-    public enum AuthTypeEnum {
-        /**
-         * corp 邮箱认证类型
-         */
-        CORP("corp"),
-        /**
-         * mesg.corp 域认证类型
-         */
-        MESG_CORP("mesg"),
-        /**
-         * 翼信邮箱认证类型
-         */
-        YI_XIN("yixin"),
-        /**
-         * 易现账号认证类型
-         */
-        YI_XIAN("ezxr"),
-        ;
-        private final String authType;
-
-        AuthTypeEnum(String authType) {
-            this.authType = authType;
-        }
-
-        public String getAuthType() {
-            return authType;
-        }
-
-        public static AuthTypeEnum getAuthTypeEnum(String authType) {
-            for (AuthTypeEnum authTypeEnum : AuthTypeEnum.values()) {
-                if (authTypeEnum.getAuthType().equals(authType)) {
-                    return authTypeEnum;
-                }
-            }
-
-            return null;
-        }
+    public String getEmail() {
+        return AuthTypeEnum.getEmail(this.corpId, this.authType);
     }
+
 
 }

@@ -13,22 +13,30 @@
 
 每天凌晨 2:00，会扫描本地预定记录，预定该会议室预定天数之后的，做到快人一步。
 
+适配会议签到，可以勾选是否签到来自动签到。
+
 ### 工具截图
 
 ![avatar](static-files/img/system-capture.png)
 
 ## 工程启动方式
-下载 jar 包，安装 Java8 环境，运行 java -jar 文件名，在浏览器打开 http://127.0.0.1:18008，即可食用。
+下载 jar 包，安装 Java8 环境，运行 `java -jar 文件名`，在浏览器打开 http://127.0.0.1:18008，即可食用。
 
 若需要部署服务器，需要能够访问 https://meeting.oa.netease.com 的网络才能使用本工具。
 
 ## GitLab 地址
-https://g.hz.netease.com/xiejiaxing/book-meeting
+[https://g.hz.netease.com/xiejiaxing/book-meeting](https://g.hz.netease.com/xiejiaxing/book-meeting)
 
 ## 更新日志
+
+### v0.2.2.0
+- 新增：提供会议室自动签到功能
+- 升级：升级项目的部分版本依赖
+- 优化：优化部分代码的逻辑
+
 ### v0.2.0
 - 新增：提供会议室按照星期周期预定
-- 更改：cookie 过期时间设为 Integer.MAX_VALUE
+- 更改：cookie 过期时间设为 `Integer.MAX_VALUE`
 - 修复：预定失败不能继续预定下一个
 - 重构：部分前端代码
 
@@ -44,7 +52,7 @@ https://g.hz.netease.com/xiejiaxing/book-meeting
 
 ### v0.1.0
 - 初版系统，支持有限功能
-- 普通的 alert 提示
+- 普通的 `alert` 提示
 - 点击“测试登录”时候，需要等待模拟登录，耗时可能要几秒，需要稍等
 - 暂仅支持具体日期时间预定
 - 本地用户名密码明文保存

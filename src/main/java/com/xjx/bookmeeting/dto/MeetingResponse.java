@@ -1,14 +1,14 @@
 package com.xjx.bookmeeting.dto;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.xjx.bookmeeting.exception.FrontException;
 import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author XJX
@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 public class MeetingResponse<T> implements Serializable {
     private static final long serialVersionUID = 6058753305258783016L;
+
+    public static final String TRUE_RESULT_TYPE = "true";
 
     private static final String LOGIN_FAILED = "登陆超时";
 
@@ -58,8 +60,8 @@ public class MeetingResponse<T> implements Serializable {
         return b;
     }
 
-    public static TypeReference<MeetingResponse<Object>> getObjectTypeReference() {
-        return new TypeReference<MeetingResponse<Object>>() {
+    public static <T> TypeReference<MeetingResponse<T>> getObjectTypeReference() {
+        return new TypeReference<MeetingResponse<T>>() {
         };
     }
 }

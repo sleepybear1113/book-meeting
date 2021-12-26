@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Data
 @Slf4j
-public class NetEaseVerify {
+public class NetEaseVerifyUtil {
     /**
      * 进行统一身份认证
      *
@@ -61,7 +61,7 @@ public class NetEaseVerify {
      * @param url 跳转 URL
      * @return 获取到的认证页面的 URL，用来给下一步提供 URL 进行 post
      */
-    public static String toVerify(String url) {
+    private static String toVerify(String url) {
         log.info("============== toVerify ==============");
         if (StringUtils.isBlank(url)) {
             return null;
@@ -107,7 +107,7 @@ public class NetEaseVerify {
      * @param url      跳转到登录页的 URL
      * @return 登录成功之后会返回 cookie 和重定向 location
      */
-    public static LocationCookie login(String url, UserInfo userInfo) {
+    private static LocationCookie login(String url, UserInfo userInfo) {
         log.info("============== login ==============");
         if (StringUtils.isBlank(url) || userInfo == null || userInfo.isInvalid()) {
             log.warn("invalid");
@@ -185,7 +185,7 @@ public class NetEaseVerify {
      * 这是一个封装的类，用来存放重定向 location 和 cookie
      */
     @Data
-    static class LocationCookie {
+    private static class LocationCookie {
         private String location;
         private List<Cookie> cookies;
 

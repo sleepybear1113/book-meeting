@@ -28,23 +28,24 @@ function fillBookedInfo(bookMeetingInfoList) {
     let bookedRoomTableResult = document.getElementById("booked-rooms-table-result-body");
     let html = "";
     for (let i = 0; i < bookMeetingInfoList.length; i++) {
-        let bookOnceInfo = bookMeetingInfoList[i];
+        let bookMeetingInfo = bookMeetingInfoList[i];
         let timeStr = "";
-        let week = bookOnceInfo.week;
+        let week = bookMeetingInfo.week;
         if (week == null) {
-            timeStr = bookOnceInfo.year + "/" + bookOnceInfo.month + "/" + bookOnceInfo.day;
+            timeStr = bookMeetingInfo.year + "/" + bookMeetingInfo.month + "/" + bookMeetingInfo.day;
         } else {
             timeStr = "每周" + getWeekString(week);
         }
 
-        timeStr += " " + bookOnceInfo.timeBegin + "-" + bookOnceInfo.timeEnd;
+        timeStr += " " + bookMeetingInfo.timeBegin + "-" + bookMeetingInfo.timeEnd;
         html += `
         <tr>
-            <th style="border: 1px solid">${bookOnceInfo.id}</th>
-            <th style="border: 1px solid">${bookOnceInfo.roomName}</th>
-            <th style="border: 1px solid">${bookOnceInfo.meetingName || "会议"}</th>
+            <th style="border: 1px solid">${bookMeetingInfo.id}</th>
+            <th style="border: 1px solid">${bookMeetingInfo.roomName}</th>
+            <th style="border: 1px solid">${bookMeetingInfo.meetingName || "会议"}</th>
             <th style="border: 1px solid">${timeStr}</th>
-            <th><button onclick="cancelBookRoom(${bookOnceInfo.id})">取消</button></th>
+            <th style="border: 1px solid">${bookMeetingInfo.autoSignIn === true}</th>
+            <th><button onclick="cancelBookRoom(${bookMeetingInfo.id})">取消</button></th>
         </tr>`;
     }
     bookedRoomTableResult.innerHTML = html;

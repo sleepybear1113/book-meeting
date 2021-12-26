@@ -3,6 +3,7 @@ package com.xjx.bookmeeting.domain;
 import com.xjx.bookmeeting.enumeration.CanBookEnum;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.utils.OtherUtils;
+import com.xjx.bookmeeting.utils.login.AuthTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -68,5 +69,9 @@ public class User extends BaseDomain implements Serializable {
         }
 
         return new UserCookieInfo(this.cookie, this.loginIdWeaver);
+    }
+
+    public String getEmail() {
+        return AuthTypeEnum.getEmail(this.username, AuthTypeEnum.getAuthTypeEnum(authType));
     }
 }

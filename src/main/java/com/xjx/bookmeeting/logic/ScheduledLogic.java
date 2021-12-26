@@ -1,9 +1,11 @@
 package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.BookRoomAction;
+import com.xjx.bookmeeting.actions.SignInRoomAction;
 import com.xjx.bookmeeting.domain.BookMeetingInfo;
 import com.xjx.bookmeeting.domain.User;
 import com.xjx.bookmeeting.dto.BookRoomResult;
+import com.xjx.bookmeeting.dto.SignInRoomResponse;
 import com.xjx.bookmeeting.enumeration.CanBookEnum;
 import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.utils.OtherUtils;
@@ -85,8 +87,18 @@ public class ScheduledLogic {
             }
 
             try {
+                // 预定会议室
                 BookRoomResult book = BookRoomAction.book(user.getUserCookieInfo(), formData);
                 log.info(book.toString());
+                OtherUtils.sleep(1000L);
+
+                if (Boolean.TRUE.equals(bookMeetingInfo.getAutoSignIn())) {
+                    // 签到会议室
+                    SignInRoomResponse signInRoomResponse = SignInRoomAction.signIn(user.getUserCookieInfo(), book, bookMeetingInfo.getAreaIdEnum().getAreaId(), user.getEmail());
+                    if (signInRoomResponse != null) {
+                        log.info(signInRoomResponse.toString());
+                    }
+                }
             } catch (FrontException e) {
                 log.info(e.getMessage());
             } catch (Exception e) {

@@ -42,6 +42,11 @@ public class BookMeetingInfo extends BaseDomain implements Serializable {
     private String bookTime;
 
     /**
+     * 是否自动签到
+     */
+    private Boolean autoSignIn;
+
+    /**
      * 获取可预订的天数
      *
      * @return Integer

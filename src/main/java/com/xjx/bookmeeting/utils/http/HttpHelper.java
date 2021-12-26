@@ -13,13 +13,16 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -29,6 +32,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -69,11 +73,11 @@ public class HttpHelper implements Serializable {
         httpCookieStore = new BasicCookieStore();
         SSLConnectionSocketFactory sslConnectionSocketFactory = null;
         try {
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, (TrustStrategy) (chain, authType) -> true).build();
             sslContext.init(null, new TrustManager[]{X509MGR}, null);
-            HostnameVerifier hostnameVerifier = (hostname, session) -> true;
+            HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
             sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
             log.error(e.getMessage(), e);
         }
 
@@ -89,11 +93,23 @@ public class HttpHelper implements Serializable {
     }
 
     public static HttpHelper makeDefaultGetHttpHelper(String url) {
-        return new HttpHelper(HttpRequestMaker.makeHttpHelper(url, MethodEnum.METHOD_GET).buildDefaultTimeoutConfig());
+        return makeDefaultTimeoutHttpHelper(url, MethodEnum.METHOD_GET, null);
     }
 
     public static HttpHelper makeDefaultTimeoutHttpHelper(String url, MethodEnum methodEnum) {
-        return new HttpHelper(HttpRequestMaker.makeHttpHelper(url, methodEnum).buildDefaultTimeoutConfig());
+        return makeDefaultTimeoutHttpHelper(url, methodEnum, null);
+    }
+
+    public static HttpHelper makeDefaultTimeoutHttpHelper(String url, MethodEnum methodEnum, int port) {
+        HttpRequestMaker httpRequestMaker = HttpRequestMaker.makeHttpHelper(url, methodEnum);
+        httpRequestMaker.setHttpHost(new HttpHost("127.0.0.1", port, HttpHost.DEFAULT_SCHEME_NAME));
+        return new HttpHelper(httpRequestMaker.buildDefaultTimeoutConfig());
+    }
+
+    public static HttpHelper makeDefaultTimeoutHttpHelper(String url, MethodEnum methodEnum, HttpHost httpHost) {
+        HttpRequestMaker httpRequestMaker = HttpRequestMaker.makeHttpHelper(url, methodEnum);
+        httpRequestMaker.setHttpHost(httpHost);
+        return new HttpHelper(httpRequestMaker.buildDefaultTimeoutConfig());
     }
 
     public static HttpHelper makeDefaultTimeoutHttpHelper(HttpRequestMaker httpRequestMaker) {

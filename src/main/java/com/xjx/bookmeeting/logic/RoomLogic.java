@@ -58,7 +58,7 @@ public class RoomLogic {
         return GetSpareRoomAction.getRooms(query, new UserCookieInfo(userInfo.getCookie(), userInfo.getLoginIdWeaver()));
     }
 
-    public Boolean bookRoom(User user, String dayString, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName, String bookTime, String weekStrings) {
+    public Boolean bookRoom(User user, String dayString, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName, String bookTime, String weekStrings, Boolean autoSignIn) {
         if (StringUtils.isBlank(user.getUsername()) || roomId == null || areaId == null || StringUtils.isBlank(bookTime)) {
             FrontException.throwCommonFrontException("参数错误");
         }
@@ -121,6 +121,7 @@ public class RoomLogic {
             add.setRoomName(roomName);
             add.setBookTime(bookTime);
             add.setWeek(week);
+            add.setAutoSignIn(autoSignIn);
             add.fillAllTime();
             if (StringUtils.isNotBlank(meetingName)) {
                 add.setMeetingName(meetingName);

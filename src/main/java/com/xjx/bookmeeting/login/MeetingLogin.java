@@ -1,6 +1,6 @@
 package com.xjx.bookmeeting.login;
 
-import com.xjx.bookmeeting.utils.login.NetEaseVerify;
+import com.xjx.bookmeeting.utils.login.NetEaseVerifyUtil;
 import com.xjx.bookmeeting.utils.login.UserInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.cookie.Cookie;
@@ -28,7 +28,7 @@ public class MeetingLogin {
         }
 
         // 进行登录
-        List<Cookie> cookies = NetEaseVerify.verify(URL, userInfo);
+        List<Cookie> cookies = NetEaseVerifyUtil.verify(URL, userInfo);
         if (CollectionUtils.isEmpty(cookies)) {
             return null;
         }

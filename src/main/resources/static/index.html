@@ -51,6 +51,7 @@
             <th>会议室</th>
             <th>主题</th>
             <th>时间</th>
+            <th>自动签到</th>
             <th>操作</th>
         </tr>
         <tbody id="booked-rooms-table-result-body">
@@ -190,6 +191,7 @@
                     <option value="00">00</option>
                     <option value="30">30</option>
                 </select>
+                <label for="auto-sign-in-checkbox">自动签到</label><input type="checkbox" id="auto-sign-in-checkbox">
                 <br/>
                 <label for="book-once-meeting-once">会议主题</label><input id="book-once-meeting-once" placeholder="选填">
                 <button id="book-once-button" onclick="bookRoom()">预定</button>

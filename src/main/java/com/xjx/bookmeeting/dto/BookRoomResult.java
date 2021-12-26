@@ -24,7 +24,6 @@ public class BookRoomResult extends MeetingResponse<String> {
     public static boolean isBookSuccess(BookRoomResult bookRoomResult) {
         if (bookRoomResult == null) {
             throw new FrontException("预定结果为 null");
-
         }
         if (SUCCESS_STRING.equals(bookRoomResult.getResultType())) {
             return true;
