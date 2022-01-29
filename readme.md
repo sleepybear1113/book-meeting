@@ -20,7 +20,8 @@
 ![avatar](static-files/img/system-capture.png)
 
 ## 工程启动方式
-下载 jar 包，安装 Java8 环境，运行 `java -jar 文件名`，在浏览器打开 http://127.0.0.1:18008，即可食用。
+下载 jar 包，安装 Java 环境，运行 `java -jar 文件名`，在浏览器打开 http://127.0.0.1:18008，即可食用。
+Java 环境要求：v0.3.0 之前版本使用 Java 8 构建，v0.3.0 之后版本使用 Java 17 构建。
 
 若需要部署服务器，需要能够访问 https://meeting.oa.netease.com 的网络才能使用本工具。
 
@@ -28,6 +29,11 @@
 [https://g.hz.netease.com/xiejiaxing/book-meeting](https://g.hz.netease.com/xiejiaxing/book-meeting)
 
 ## 更新日志
+
+### v0.3.0.0
+- 升级：Spring Boot 版本至 3.0.0-M1
+- 升级：Java 版本至 17（需要改用 Java 17）
+- 引入：SQLite
 
 ### v0.2.2.0
 - 新增：提供会议室自动签到功能

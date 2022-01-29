@@ -3,6 +3,7 @@ package com.xjx.bookmeeting.advice;
 import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.utils.returns.ResultCode;
 import com.xjx.bookmeeting.utils.returns.ResultCodeConstant;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -12,8 +13,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 将信息、异常封装格式给前端接口
