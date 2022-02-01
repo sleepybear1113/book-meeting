@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @Slf4j
 @ToString
 public class MeetingResponse<T> implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6058753305258783016L;
 
     public static final String TRUE_RESULT_TYPE = "true";
@@ -54,14 +56,14 @@ public class MeetingResponse<T> implements Serializable {
         if (!b) {
             log.warn("MeetingResponse is not success, {}", meetingResponse);
             if (error.contains(LOGIN_FAILED)) {
-                FrontException.throwCommonFrontException(LOGIN_FAILED);
+                throw new FrontException(LOGIN_FAILED);
             }
         }
         return b;
     }
 
     public static <T> TypeReference<MeetingResponse<T>> getObjectTypeReference() {
-        return new TypeReference<MeetingResponse<T>>() {
+        return new TypeReference<>() {
         };
     }
 }

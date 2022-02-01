@@ -17,7 +17,6 @@ function fillUserInfo(user) {
     if (authType != null) {
         document.getElementById(authType).checked = true;
     }
-    fillBookedInfo(user.bookMeetingInfoList);
 }
 
 function fillBookedInfo(bookMeetingInfoList) {
@@ -44,7 +43,7 @@ function fillBookedInfo(bookMeetingInfoList) {
             <th style="border: 1px solid">${bookMeetingInfo.roomName}</th>
             <th style="border: 1px solid">${bookMeetingInfo.meetingName || "会议"}</th>
             <th style="border: 1px solid">${timeStr}</th>
-            <th style="border: 1px solid">${bookMeetingInfo.autoSignIn === true}</th>
+            <th style="border: 1px solid">${bookMeetingInfo.autoSignIn === 1}</th>
             <th><button onclick="cancelBookRoom(${bookMeetingInfo.id})">取消</button></th>
         </tr>`;
     }
@@ -61,7 +60,7 @@ function fillBookInfo(id) {
     let timeOnce = document.getElementById("time-once");
     let bookDays = getBookDays(room.bookTime);
     if (bookDays === 0) {
-        timeOnce.setAttribute("readOnly", true);
+        timeOnce.setAttribute("readOnly", "true");
         timeOnce.value = "";
     } else {
         timeOnce.removeAttribute("readOnly");

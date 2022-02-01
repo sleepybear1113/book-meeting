@@ -11,6 +11,27 @@ function initUserInfo() {
             return;
         }
         fillUserInfo(user);
+        getUserBookedRooms();
+    });
+}
+
+function getUserBookedRooms() {
+    let url = "/room/getBookedRooms";
+    axios.get(url).then(res => {
+        let response = res.data;
+        if (!processErrorResult(response)) {
+            return;
+        }
+
+        if (response.result == null || response.result.length === 0) {
+            return;
+        }
+
+        let bookMeetingInfoList = [];
+        for (let i = 0; i < response.result.length; i++) {
+            bookMeetingInfoList.push(new BookMeetingInfo(response.result[i]));
+        }
+        fillBookedInfo(bookMeetingInfoList);
     });
 }
 
@@ -27,7 +48,7 @@ function cancelBookRoom(id) {
         }
 
         if (response.result) {
-            initUserInfo();
+            getUserBookedRooms();
         } else {
             alert("失败");
         }
@@ -179,7 +200,7 @@ function bookRoom() {
             roomName: bookRoomFloorName + bookRoomName,
             bookTime: bookTime,
             weeks: weekOptions,
-            autoSignIn: autoSignIn
+            autoSignIn: autoSignIn === true ? 1 : 0,
         }
     }).then(res => {
         let response = res.data;
@@ -191,7 +212,7 @@ function bookRoom() {
         let result = response.result;
         if (result) {
             alert("成功");
-            initUserInfo();
+            getUserBookedRooms();
         } else {
             alert("失败");
         }

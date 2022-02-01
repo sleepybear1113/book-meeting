@@ -29,6 +29,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -45,6 +46,7 @@ import java.util.List;
  */
 @Slf4j
 public class HttpHelper implements Serializable {
+    @Serial
     private static final long serialVersionUID = 7802931388945369325L;
 
     private final CloseableHttpClient httpClient;

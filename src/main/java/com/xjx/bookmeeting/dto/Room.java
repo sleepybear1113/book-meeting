@@ -99,7 +99,7 @@ public class Room {
     private Boolean resultType;
 
     public static TypeReference<MeetingResponse<Room>> getTypeReference() {
-        return new TypeReference<MeetingResponse<Room>>() {
+        return new TypeReference<>() {
         };
     }
 }

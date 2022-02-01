@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Data
 @ToString
 public class Floor implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6671116191396459576L;
 
     @JSONField(name = "buildingName")
@@ -43,7 +45,7 @@ public class Floor implements Serializable {
     private Integer buildingId;
 
     public static TypeReference<MeetingResponse<Floor>> getTypeReference() {
-        return new TypeReference<MeetingResponse<Floor>>() {
+        return new TypeReference<>() {
         };
     }
 }

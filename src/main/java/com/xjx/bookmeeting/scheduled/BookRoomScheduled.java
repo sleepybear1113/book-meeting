@@ -1,7 +1,7 @@
 package com.xjx.bookmeeting.scheduled;
 
-import com.xjx.bookmeeting.logic.ScheduledLogic;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.xjx.bookmeeting.logic.BookMeetingLogic;
+import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,14 +15,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 @Configuration
 @EnableScheduling
 public class BookRoomScheduled {
-    @Autowired
-    private ScheduledLogic scheduledLogic;
+    @Resource
+    private BookMeetingLogic bookMeetingLogic;
 
     /**
      * 每天 2:00 定时任务
      */
     @Scheduled(cron = "0 0 2 * * ?")
     private void configureTasks() {
-        scheduledLogic.bookAllUsers();
+        bookMeetingLogic.bookAllUsers();
     }
 }

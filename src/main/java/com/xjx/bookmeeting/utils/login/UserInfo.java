@@ -3,6 +3,7 @@ package com.xjx.bookmeeting.utils.login;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @Data
 public class UserInfo implements Serializable {
+    @Serial
     private static final long serialVersionUID = -9017793880291711902L;
 
     private AuthTypeEnum authType;
@@ -21,7 +23,7 @@ public class UserInfo implements Serializable {
     private String corpPw;
 
     public boolean isInvalid() {
-        return authType == null || StringUtils.isBlank(trustRoot) || StringUtils.isBlank(corpId) || StringUtils.isBlank(corpPw);
+        return this.authType == null || StringUtils.isBlank(this.trustRoot) || StringUtils.isBlank(this.corpId) || StringUtils.isBlank(this.corpPw);
     }
 
     /**
@@ -41,6 +43,5 @@ public class UserInfo implements Serializable {
     public String getEmail() {
         return AuthTypeEnum.getEmail(this.corpId, this.authType);
     }
-
 
 }

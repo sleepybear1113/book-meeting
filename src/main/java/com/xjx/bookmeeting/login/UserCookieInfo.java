@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.cookie.BasicClientCookie;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class UserCookieInfo implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8513878974230668976L;
 
     private static final String COOKIE_SESSION = "JSESSIONID";

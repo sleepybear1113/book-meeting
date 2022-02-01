@@ -51,17 +51,11 @@ public enum AuthTypeEnum {
             return null;
         }
 
-        switch (authTypeEnum) {
-            case CORP:
-                return id + "@corp.netease.com";
-            case MESG_CORP:
-                return id + "mesg.corp.netease.com";
-            case YI_XIN:
-                return id + "@yixin.im";
-            case YI_XIAN:
-                return id;
-            default:
-                return null;
-        }
+        return switch (authTypeEnum) {
+            case CORP -> id + "@corp.netease.com";
+            case MESG_CORP -> id + "mesg.corp.netease.com";
+            case YI_XIN -> id + "@yixin.im";
+            case YI_XIAN -> id;
+        };
     }
 }

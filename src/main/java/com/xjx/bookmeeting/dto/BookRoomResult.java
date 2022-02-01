@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * there is introduction
  *
@@ -15,6 +17,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 public class BookRoomResult extends MeetingResponse<String> {
+    @Serial
     private static final long serialVersionUID = 1171595966979555115L;
     public static final String SUCCESS_STRING = "true";
 

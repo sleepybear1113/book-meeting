@@ -1,10 +1,11 @@
 package com.xjx.bookmeeting.helper;
 
-import com.xjx.bookmeeting.domain.User;
+import com.xjx.bookmeeting.dto.UserDto;
 import com.xjx.bookmeeting.exception.FrontException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -15,47 +16,44 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @date 2021/10/13 9:37
  */
 public class CookieHelper {
-    public static final String COOKIE_NAME_USERNAME = "username";
-    public static final String COOKIE_NAME_AUTH_TYPE = "authType";
+    /**
+     * cookie 名
+     */
+    public static final String USER_ID = "userId";
 
     /**
-     * 最大时间
+     * cookie 过期的最大时间
      */
     public static final int COOKIE_MAX_AGE = Integer.MAX_VALUE;
 
     /**
-     * 获取到 user 后对浏览器进行写 cookie
+     * 获取到 userDto 后对浏览器进行写 cookie
      *
-     * @param user user
+     * @param userDto userDto
      */
-    public static void writeLoginCookie(User user) {
+    public static void writeLoginCookie(UserDto userDto) {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (servletRequestAttributes == null) {
             return;
         }
         HttpServletResponse response = servletRequestAttributes.getResponse();
-        if (user == null || response == null) {
+        if (userDto == null || response == null) {
             return;
         }
 
-        Cookie cookieUsername = new Cookie(COOKIE_NAME_USERNAME, user.getUsername());
+        Cookie cookieUsername = new Cookie(USER_ID, String.valueOf(userDto.getId()));
         cookieUsername.setPath("/");
         cookieUsername.setMaxAge(COOKIE_MAX_AGE);
 
-        Cookie cookieAuthType = new Cookie(COOKIE_NAME_AUTH_TYPE, user.getAuthType());
-        cookieAuthType.setPath("/");
-        cookieAuthType.setMaxAge(COOKIE_MAX_AGE);
-
         response.addCookie(cookieUsername);
-        response.addCookie(cookieAuthType);
     }
 
     /**
      * 从 HttpServletRequest 中读取 user 信息
      *
-     * @return User
+     * @return UserDto
      */
-    public static User getLoginCookie() {
+    public static UserDto getLoginCookie() {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (servletRequestAttributes == null) {
             return null;
@@ -67,30 +65,31 @@ public class CookieHelper {
             return null;
         }
 
-        User user = new User();
+        UserDto userDto = null;
         for (Cookie cookie : cookies) {
             String name = cookie.getName();
             String value = cookie.getValue();
-            if (COOKIE_NAME_USERNAME.equals(name)) {
-                user.setUsername(value);
-            } else if (COOKIE_NAME_AUTH_TYPE.equals(name)) {
-                user.setAuthType(value);
+            if (USER_ID.equals(name)) {
+                if (StringUtils.isNumeric(value)) {
+                    userDto = new UserDto();
+                    userDto.setId(Integer.valueOf(value));
+                }
             }
         }
 
-        return user;
+        return userDto;
     }
 
     /**
      * 从 HttpServletRequest 中读取 user 信息，若无则抛异常
      *
-     * @return User
+     * @return UserDto
      */
-    public static User getLoginCookieWithFrontException() {
-        User user = getLoginCookie();
-        if (user == null) {
-            FrontException.throwCommonFrontException("cookie 未包含用户信息，请重新登录");
+    public static UserDto getLoginCookieWithFrontException() {
+        UserDto userDto = getLoginCookie();
+        if (userDto == null) {
+            throw new FrontException("cookie 未包含用户信息，请重新登录");
         }
-        return user;
+        return userDto;
     }
 }

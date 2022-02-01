@@ -1,0 +1,10 @@
+server:
+  port: 18008
+spring:
+  datasource:
+    # SQL 文件地址：当前路径 db 文件夹下 book-meeting.sqlite3 文件
+    url: jdbc:sqlite:db/book-meeting.sqlite3
+    driver-class-name: org.sqlite.JDBC
+    # 无用户名密码
+    username:
+    password:

@@ -2,15 +2,17 @@ package com.xjx.bookmeeting.exception;
 
 import com.xjx.bookmeeting.utils.returns.ResultCodeConstant;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * there is introduction
+ * 前端异常
  *
  * @author XJX
  * @date 2021/9/3 9:40
  */
 public class FrontException extends RuntimeException implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2332850776216529844L;
 
     private Integer code;
@@ -31,10 +33,6 @@ public class FrontException extends RuntimeException implements Serializable {
 
     public void setCode(Integer code) {
         this.code = code;
-    }
-
-    public static void throwCommonFrontException(String message) {
-        throw new FrontException(message);
     }
 
     public static FrontException loginFail() {

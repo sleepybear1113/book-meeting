@@ -3,102 +3,96 @@
  */
 
 /**
- * 楼层对象
- * @param o
- * @returns {null}
- * @constructor
+ * 基础类
  */
-function Floor(o) {
-    if (o == null) {
-        return null;
+class BaseDomain {
+    constructor(props) {
+        if (props != null) {
+            this.id = props.id;
+            this.createTime = props.createTime;
+            this.modifyTime = props.modifyTime;
+        }
     }
-    this.id = o.id;
-    this.createTime = o.createTime;
-    this.modifyTime = o.modifyTime;
+}
 
-    this.areaId = o.areaId;
-    this.buildingId = o.buildingId;
-    this.buildingName = o.buildingName;
-    this.floorName = o.floorName;
+/**
+ * 楼层对象
+ */
+class Floor extends BaseDomain {
+    constructor(props) {
+        super(props);
+        if (props == null) {
+            return;
+        }
+
+        this.areaId = props.areaId;
+        this.buildingId = props.buildingId;
+        this.buildingName = props.buildingName;
+        this.floorName = props.floorName;
+    }
 }
 
 /**
  * 会议室对象
- * @param o
- * @returns {null}
- * @constructor
  */
-function Room(o) {
-    if (o == null) {
-        return null;
-    }
-    this.id = o.id;
-    this.createTime = o.createTime;
-    this.modifyTime = o.modifyTime;
+class Room extends BaseDomain {
+    constructor(props) {
+        super(props);
 
-    this.floorId = o.floorId;
-    this.buildingId = o.buildingId;
-    this.areaId = o.areaId;
-    this.roomName = o.roomName;
-    this.floorName = o.floorName;
-    this.roomNumPeople = o.roomNumPeople;
-    this.meetingBooked = o.meetingBooked;
-    this.bookTime = o.bookTime;
+        if (props == null) {
+            return;
+        }
+        this.floorId = props.floorId;
+        this.buildingId = props.buildingId;
+        this.areaId = props.areaId;
+        this.roomName = props.roomName;
+        this.floorName = props.floorName;
+        this.roomNumPeople = props.roomNumPeople;
+        this.meetingBooked = props.meetingBooked;
+        this.bookTime = props.bookTime;
+    }
 }
 
 /**
  * 用户信息
- * @param o
- * @returns {null}
- * @constructor
  */
-function User(o) {
-    if (o == null) {
-        return null;
-    }
-    this.id = o.id;
-    this.createTime = o.createTime;
-    this.modifyTime = o.modifyTime;
+class User extends BaseDomain {
+    constructor(props) {
+        super(props);
 
-    this.username = o.username;
-    this.password = o.password;
-    this.authType = o.authType;
-    this.cookie = o.cookie;
-    this.loginIdWeaver = o.loginIdWeaver;
-
-    if (o.bookMeetingInfoList != null) {
-        let bookMeetingInfoList = o.bookMeetingInfoList;
-        let list = [];
-        for (let i = 0; i < bookMeetingInfoList.length; i++) {
-            list.push(new BookOnceInfo(bookMeetingInfoList[i]));
+        if (props == null) {
+            return;
         }
-        this.bookMeetingInfoList = list;
+
+        this.username = props.username;
+        this.password = props.password;
+        this.authType = props.authType;
+        this.cookie = props.cookie;
+        this.loginIdWeaver = props.loginIdWeaver;
+
     }
 }
 
 /**
  * 预定信息
- * @param o
- * @returns {null}
- * @constructor
  */
-function BookOnceInfo(o) {
-    if (o == null) {
-        return null;
-    }
-    this.id = o.id;
-    this.createTime = o.createTime;
-    this.modifyTime = o.modifyTime;
+class BookMeetingInfo extends BaseDomain {
+    constructor(props) {
+        super(props);
 
-    this.year = o.year;
-    this.month = o.month;
-    this.day = o.day;
-    this.timeBegin = o.timeBegin;
-    this.timeEnd = o.timeEnd;
-    this.areaId = o.areaId;
-    this.roomId = o.roomId;
-    this.meetingName = o.meetingName;
-    this.roomName = o.roomName;
-    this.week = o.week;
-    this.autoSignIn = o.autoSignIn;
+        if (props == null) {
+            return;
+        }
+        this.year = props.year;
+        this.month = props.month;
+        this.day = props.day;
+        this.timeBegin = props.timeBegin;
+        this.timeEnd = props.timeEnd;
+        this.areaId = props.areaId;
+        this.roomId = props.roomId;
+        this.meetingName = props.meetingName;
+        this.roomName = props.roomName;
+        this.week = props.week;
+        this.autoSignIn = props.autoSignIn;
+    }
 }

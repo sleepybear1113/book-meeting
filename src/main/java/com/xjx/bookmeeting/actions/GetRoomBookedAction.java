@@ -10,8 +10,8 @@ import com.xjx.bookmeeting.utils.login.LoginConstant;
 import lombok.Data;
 import org.apache.http.cookie.Cookie;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -90,14 +90,11 @@ public class GetRoomBookedAction {
 
             String fromDateString = null;
             String toDateString = null;
-            try {
-                if (fromDate != null) {
-                    fromDateString = URLEncoder.encode(SDF.format(fromDate), "UTF-8");
-                }
-                if (toDate != null) {
-                    toDateString = URLEncoder.encode(SDF.format(toDate), "UTF-8");
-                }
-            } catch (UnsupportedEncodingException ignored) {
+            if (fromDate != null) {
+                fromDateString = URLEncoder.encode(SDF.format(fromDate), StandardCharsets.UTF_8);
+            }
+            if (toDate != null) {
+                toDateString = URLEncoder.encode(SDF.format(toDate), StandardCharsets.UTF_8);
             }
 
             String format = "roomId=%s&fromDate=%s&toDate=%s&meetingstatus=%s&areaId=%s";

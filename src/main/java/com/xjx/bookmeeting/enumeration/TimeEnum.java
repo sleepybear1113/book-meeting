@@ -3,7 +3,7 @@ package com.xjx.bookmeeting.enumeration;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * there is introduction
+ * 预定时间枚举
  *
  * @author xjx
  * @date 2021/10/7 14:58

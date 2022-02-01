@@ -1,4 +1,4 @@
-package com.xjx.bookmeeting.domain;
+package com.xjx.bookmeeting.dto;
 
 import com.xjx.bookmeeting.enumeration.AreaTypeEnum;
 import com.xjx.bookmeeting.enumeration.CanBookEnum;
@@ -6,6 +6,7 @@ import com.xjx.bookmeeting.enumeration.TimeEnum;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -13,12 +14,20 @@ import java.util.*;
  * there is introduction
  *
  * @author xjx
- * @date 2021/10/9 23:53
+ * @date 2022/1/30 1:33
  */
 @Data
-public class BookMeetingInfo extends BaseDomain implements Serializable {
-    private static final long serialVersionUID = 1777036795428134524L;
+public class BookMeetingInfoDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 6253240213843138989L;
+
     private static final Calendar CALENDAR = Calendar.getInstance();
+
+    private Long id;
+    private Long createTime;
+    private Long modifyTime;
+
+    private Integer userId;
 
     private Integer year;
     private Integer month;
@@ -44,7 +53,8 @@ public class BookMeetingInfo extends BaseDomain implements Serializable {
     /**
      * 是否自动签到
      */
-    private Boolean autoSignIn;
+    private Integer autoSignIn;
+
 
     /**
      * 获取可预订的天数
@@ -226,7 +236,7 @@ public class BookMeetingInfo extends BaseDomain implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BookMeetingInfo that = (BookMeetingInfo) o;
+        BookMeetingInfoDto that = (BookMeetingInfoDto) o;
         return Objects.equals(week, that.week) && Objects.equals(year, that.year) && Objects.equals(month, that.month) && Objects.equals(day, that.day) && Objects.equals(timeBegin, that.timeBegin) && Objects.equals(timeEnd, that.timeEnd) && Objects.equals(areaId, that.areaId) && Objects.equals(roomId, that.roomId);
     }
 
@@ -234,5 +244,5 @@ public class BookMeetingInfo extends BaseDomain implements Serializable {
     public int hashCode() {
         return Objects.hash(year, month, day, timeBegin, timeEnd, areaId, roomId);
     }
-}
 
+}

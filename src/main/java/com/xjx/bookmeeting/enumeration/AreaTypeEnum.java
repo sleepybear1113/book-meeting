@@ -1,7 +1,7 @@
 package com.xjx.bookmeeting.enumeration;
 
 /**
- * there is introduction
+ * 不同办公地点的枚举
  *
  * @author XJX
  * @date 2021/8/31 1:55

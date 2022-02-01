@@ -1,10 +1,10 @@
 package com.xjx.bookmeeting.controller;
 
-import com.xjx.bookmeeting.domain.User;
+import com.xjx.bookmeeting.dto.UserDto;
 import com.xjx.bookmeeting.helper.CookieHelper;
 import com.xjx.bookmeeting.logic.UserLogic;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,28 +17,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 public class UserController {
-    @Autowired
+    @Resource
     private UserLogic userLogic;
 
     @RequestMapping("/user/login")
     public Boolean login(String username, String password, String authType) {
-        User user = userLogic.login(username, password, authType);
-        CookieHelper.writeLoginCookie(user);
+        UserDto userDto = userLogic.login(username, password, authType);
+        CookieHelper.writeLoginCookie(userDto);
         return true;
     }
 
     @RequestMapping("/user/getUserInfo")
-    public User getUserInfo() {
-        User user = CookieHelper.getLoginCookie();
-        if (user == null) {
+    public UserDto getUserInfo() {
+        UserDto userDto = CookieHelper.getLoginCookie();
+        if (userDto == null) {
             return null;
         }
-        return userLogic.getUserInfo(user);
+        return userLogic.getUserInfo(userDto);
     }
 
     @RequestMapping("/user/deleteUser")
     public Boolean deleteUser() {
-        User user = CookieHelper.getLoginCookieWithFrontException();
-        return userLogic.deleteUser(user);
+        UserDto userDto = CookieHelper.getLoginCookieWithFrontException();
+        return userLogic.deleteUser(userDto.getId());
     }
 }

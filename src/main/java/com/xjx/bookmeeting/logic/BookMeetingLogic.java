@@ -2,73 +2,91 @@ package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.BookRoomAction;
 import com.xjx.bookmeeting.actions.SignInRoomAction;
-import com.xjx.bookmeeting.domain.BookMeetingInfo;
-import com.xjx.bookmeeting.domain.User;
+import com.xjx.bookmeeting.dto.BookMeetingInfoDto;
 import com.xjx.bookmeeting.dto.BookRoomResult;
 import com.xjx.bookmeeting.dto.SignInRoomResponse;
+import com.xjx.bookmeeting.dto.UserDto;
+import com.xjx.bookmeeting.enumeration.AutoSignEnum;
 import com.xjx.bookmeeting.enumeration.CanBookEnum;
 import com.xjx.bookmeeting.exception.FrontException;
+import com.xjx.bookmeeting.service.BookMeetingInfoService;
 import com.xjx.bookmeeting.utils.OtherUtils;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
- * there is introduction
+ * 会议预定逻辑
  *
  * @author xjx
- * @date 2021/10/10 0:24
+ * @date 2022/2/1 12:39
  */
 @Component
 @Slf4j
-public class ScheduledLogic {
-    @Autowired
-    private UserLogic userLogic;
+public class BookMeetingLogic {
 
+    @Resource
+    private UserLogic userLogic;
+    @Resource
+    private BookMeetingInfoService bookMeetingInfoService;
+
+    /**
+     * 获取全部用户，并且预定用户的会议室
+     */
     public void bookAllUsers() {
-        List<User> allUsers = userLogic.getAllUsers();
-        if (CollectionUtils.isEmpty(allUsers)) {
+        List<UserDto> allUserDtos = userLogic.getAllUsers();
+        if (CollectionUtils.isEmpty(allUserDtos)) {
             return;
         }
-        for (User user : allUsers) {
+        for (UserDto userDto : allUserDtos) {
             try {
-                bookOnceInSchedule(user);
+                bookUserMeeting(userDto);
             } catch (Exception e) {
-                log.warn("用户" + user.getUsername() + "预定失败");
+                log.warn("用户 " + userDto.getUsername() + " 预定失败");
             }
             OtherUtils.sleep(2000);
         }
     }
 
-    public void bookOnceInSchedule(User user) {
-        if (user == null) {
+    public void bookUserMeeting(UserDto userDto) {
+        if (userDto == null) {
             return;
         }
 
-        boolean loginValid = userLogic.testLoginValidWithReLogin(user);
+        boolean loginValid = userLogic.testLoginValidWithReLogin(userDto);
         if (!loginValid) {
-            FrontException.throwCommonFrontException("登录失败，请检查用户信息");
+            throw new FrontException("登录失败，请检查用户信息");
         }
 
         // 经过这里本地保存的是最新的有效登录信息
-        user = userLogic.getUserInfo(user);
-        String loginIdWeaver = user.getLoginIdWeaver();
+        userDto = userLogic.getUserInfo(userDto);
+        Integer userId = userDto.getId();
+        String loginIdWeaver = userDto.getLoginIdWeaver();
 
-        boolean removeExpired = user.removeExpired();
-        if (removeExpired) {
-            userLogic.saveUserInfo(user, null);
-        }
-        List<BookMeetingInfo> bookMeetingInfoList = user.getBookMeetingInfoList();
+        List<BookMeetingInfoDto> bookMeetingInfoList = bookMeetingInfoService.getUserBookMeetings(userId);
         if (CollectionUtils.isEmpty(bookMeetingInfoList)) {
             return;
         }
 
-        log.info("开始进行预定，用户：" + user.getUsername());
-        for (BookMeetingInfo bookMeetingInfo : bookMeetingInfoList) {
+        // 删除过期的预定
+        bookMeetingInfoList.removeIf(o -> {
+            if (o.isInvalid() || CanBookEnum.isExpire(o.canBook())) {
+                bookMeetingInfoService.deleteBookInfos(Collections.singletonList(o.getId()));
+                return true;
+            }
+            return false;
+        });
+        if (CollectionUtils.isEmpty(bookMeetingInfoList)) {
+            return;
+        }
+
+        log.info("开始进行预定，用户：" + userDto.getUsername());
+        for (BookMeetingInfoDto bookMeetingInfo : bookMeetingInfoList) {
             if (bookMeetingInfo == null) {
                 continue;
             }
@@ -88,13 +106,13 @@ public class ScheduledLogic {
 
             try {
                 // 预定会议室
-                BookRoomResult book = BookRoomAction.book(user.getUserCookieInfo(), formData);
+                BookRoomResult book = BookRoomAction.book(userDto.getUserCookieInfo(), formData);
                 log.info(book.toString());
                 OtherUtils.sleep(1000L);
 
-                if (Boolean.TRUE.equals(bookMeetingInfo.getAutoSignIn())) {
+                if (AutoSignEnum.IMMEDIATELY.getType().equals(bookMeetingInfo.getAutoSignIn())) {
                     // 签到会议室
-                    SignInRoomResponse signInRoomResponse = SignInRoomAction.signIn(user.getUserCookieInfo(), book, bookMeetingInfo.getAreaIdEnum().getAreaId(), user.getEmail());
+                    SignInRoomResponse signInRoomResponse = SignInRoomAction.signIn(userDto.getUserCookieInfo(), book, bookMeetingInfo.getAreaIdEnum().getAreaId(), userDto.getEmail());
                     if (signInRoomResponse != null) {
                         log.info(signInRoomResponse.toString());
                     }
@@ -107,5 +125,4 @@ public class ScheduledLogic {
         }
         log.info("===============");
     }
-
 }

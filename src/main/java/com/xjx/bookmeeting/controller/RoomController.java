@@ -1,12 +1,13 @@
 package com.xjx.bookmeeting.controller;
 
-import com.xjx.bookmeeting.domain.User;
+import com.xjx.bookmeeting.dto.BookMeetingInfoDto;
 import com.xjx.bookmeeting.dto.Floor;
 import com.xjx.bookmeeting.dto.Room;
+import com.xjx.bookmeeting.dto.UserDto;
 import com.xjx.bookmeeting.helper.CookieHelper;
 import com.xjx.bookmeeting.logic.RoomLogic;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,30 +23,36 @@ import java.util.List;
 @RestController
 @Slf4j
 public class RoomController {
-    @Autowired
+    @Resource
     private RoomLogic roomLogic;
 
     @RequestMapping("/room/getAllFloors")
     public List<Floor> getAllFloors(Integer areaId) {
-        User user = CookieHelper.getLoginCookieWithFrontException();
-        return roomLogic.getAllFloors(user, areaId);
+        UserDto userDto = CookieHelper.getLoginCookieWithFrontException();
+        return roomLogic.getAllFloors(userDto.getId(), areaId);
     }
 
     @RequestMapping("/room/getSpareRoom")
     public List<Room> getSpareRoom(@RequestBody Floor floor) {
-        User user = CookieHelper.getLoginCookieWithFrontException();
-        return roomLogic.roomLogic(floor, user);
+        UserDto userDto = CookieHelper.getLoginCookieWithFrontException();
+        return roomLogic.getFloorRooms(floor, userDto.getId());
     }
 
     @RequestMapping("/room/bookRoom")
-    public Boolean bookRoom(String day, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName, String bookTime, String weeks, Boolean autoSignIn) {
-        User user = CookieHelper.getLoginCookieWithFrontException();
-        return roomLogic.bookRoom(user, day, hourBegin, hourEnd, minuteBegin, minuteEnd, roomId, areaId, meetingName, roomName, bookTime, weeks, autoSignIn);
+    public Boolean bookRoom(String day, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName, String bookTime, String weeks, Integer autoSignIn) {
+        UserDto userDto = CookieHelper.getLoginCookieWithFrontException();
+        return roomLogic.bookRoom(userDto.getId(), day, hourBegin, hourEnd, minuteBegin, minuteEnd, roomId, areaId, meetingName, roomName, bookTime, weeks, autoSignIn);
+    }
+
+    @RequestMapping("/room/getBookedRooms")
+    public List<BookMeetingInfoDto> getBookedRooms() {
+        UserDto userDto = CookieHelper.getLoginCookieWithFrontException();
+        return roomLogic.getBookedRooms(userDto.getId());
     }
 
     @RequestMapping("/room/cancelBookRoom")
     public Boolean cancelBookRoom(Long id) {
-        User user = CookieHelper.getLoginCookieWithFrontException();
-        return roomLogic.cancelBookRoom(user, id);
+        UserDto userDto = CookieHelper.getLoginCookieWithFrontException();
+        return roomLogic.cancelBookRoom(userDto.getId(), id);
     }
 }
