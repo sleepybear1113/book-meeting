@@ -11,7 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import java.sql.*;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * <strong>配置连接数据库前的初始化操作</strong><br/>
@@ -25,6 +28,8 @@ import java.sql.*;
 @Slf4j
 public class DataSourceInitConfig {
 
+    @Value("${spring.datasource.db-file}")
+    private String dbFilePath;
     @Value("${spring.datasource.url}")
     private String dataSourceUrl;
     @Value(("${spring.datasource.driver-class-name}"))
@@ -37,8 +42,10 @@ public class DataSourceInitConfig {
     @Order(100)
     public void initDataSource() {
         try {
-            Class.forName(driveClassName);
-            Connection connection = DriverManager.getConnection(dataSourceUrl);
+            createDbPath();
+
+            Class.forName(this.driveClassName);
+            Connection connection = DriverManager.getConnection(this.dataSourceUrl);
             log.info("==========Open database successfully==========");
 
             for (BaseDomain baseDomain : getTableCreateList()) {
@@ -63,5 +70,19 @@ public class DataSourceInitConfig {
                 new UserCookie(),
                 new BookMeetingInfo(),
         };
+    }
+
+    /**
+     * 新建 db 目录
+     */
+    private void createDbPath() {
+        File f = new File(this.dbFilePath);
+        File parentFile = f.getParentFile();
+        if (!parentFile.exists()) {
+            boolean mkdirs = parentFile.mkdirs();
+            if (mkdirs) {
+                log.info(">>> dictionary [" + parentFile + "] created");
+            }
+        }
     }
 }

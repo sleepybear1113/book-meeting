@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "spring.datasource.db-file",
+      "type": "java.lang.String",
+      "description": "the path of the db file."
+  }
+] }
