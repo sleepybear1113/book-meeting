@@ -26,6 +26,11 @@ Java 环境要求：v0.3.0 之前版本使用 Java 8 构建，v0.3.0 之后版�
 
 若需要部署服务器，需要能够访问 https://meeting.oa.netease.com 的网络才能使用本工具。
 
+## release jars
+历史版本 jar 包在 release 下可以找到，或者 [点击此处直达](https://g.hz.netease.com/xiejiaxing/book-meeting/-/releases)。
+
+有旧版本基于 Spring Boot 2.6 的 Java 8 构建的，也有新功能的版本基于 Spring Boot 3.0 的 Java 17 构建的。
+
 ## GitLab 地址
 [https://g.hz.netease.com/xiejiaxing/book-meeting](https://g.hz.netease.com/xiejiaxing/book-meeting)
 
