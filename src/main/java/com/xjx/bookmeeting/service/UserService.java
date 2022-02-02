@@ -2,8 +2,10 @@ package com.xjx.bookmeeting.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xjx.bookmeeting.dto.UserDto;
+import com.xjx.bookmeeting.entity.BookMeetingInfo;
 import com.xjx.bookmeeting.entity.User;
 import com.xjx.bookmeeting.entity.UserCookie;
+import com.xjx.bookmeeting.mapper.BookMeetingInfoMapper;
 import com.xjx.bookmeeting.mapper.UserCookieMapper;
 import com.xjx.bookmeeting.mapper.UserMapper;
 import com.xjx.bookmeeting.utils.OtherUtils;
@@ -30,6 +32,17 @@ public class UserService {
     private UserMapper userMapper;
     @Resource
     private UserCookieMapper userCookieMapper;
+    @Resource
+    private BookMeetingInfoMapper bookMeetingInfoMapper;
+
+    public UserDto getById(Integer userId) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            return null;
+        }
+
+        return OtherUtils.convert(user, UserDto.class);
+    }
 
     /**
      * 保存用户信息，新增 or 修改
@@ -95,8 +108,10 @@ public class UserService {
         if (userDto == null) {
             return null;
         }
-        if (userDto.getId() == null && (StringUtils.isBlank(userDto.getUsername()) || StringUtils.isBlank(userDto.getAuthType()))) {
-            return null;
+        if (userDto.getId() == null) {
+            if (StringUtils.isBlank(userDto.getUsername()) || StringUtils.isBlank(userDto.getAuthType())) {
+                return null;
+            }
         }
 
         User userQuery = new User();
@@ -135,6 +150,14 @@ public class UserService {
         }
 
         userMapper.deleteById(id);
+
+        UserCookie userCookie = new UserCookie();
+        userCookie.setUserId(id);
+        userCookieMapper.delete(new QueryWrapper<>(userCookie));
+
+        BookMeetingInfo bookMeetingInfo = new BookMeetingInfo();
+        bookMeetingInfo.setUserId(id);
+        bookMeetingInfoMapper.delete(new QueryWrapper<>(bookMeetingInfo));
         return true;
     }
 

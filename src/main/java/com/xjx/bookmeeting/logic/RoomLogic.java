@@ -94,6 +94,7 @@ public class RoomLogic {
             throw new FrontException("参数错误");
         }
 
+        // 开始组装预定信息
         // 包含至少一个 null 或者全是非 null 数字
         List<Integer> weeks = BookMeetingInfoDto.weekToList(weekStrings);
         if (StringUtils.isBlank(weekStrings)) {
@@ -132,8 +133,21 @@ public class RoomLogic {
             throw new FrontException("时间起止错误");
         }
 
-        List<BookMeetingInfoDto> bookMeetingInfoList = bookMeetingInfoService.getUserBookMeetings(userId);
+        // 查询自己的和他人的预定列表
+        List<BookMeetingInfoDto> bookMeetingInfoList = bookMeetingInfoService.getUserBookMeetings(null);
+        List<BookMeetingInfoDto> currentUserBookList = new ArrayList<>();
+        List<BookMeetingInfoDto> otherUserBookList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(bookMeetingInfoList)) {
+            for (BookMeetingInfoDto info : bookMeetingInfoList) {
+                if (userId.equals(info.getUserId())) {
+                    currentUserBookList.add(info);
+                } else {
+                    otherUserBookList.add(info);
+                }
+            }
+        }
 
+        // 检查冲突和预定
         for (Integer week : weeks) {
             BookMeetingInfoDto add = new BookMeetingInfoDto();
             add.setYear(year);
@@ -150,11 +164,30 @@ public class RoomLogic {
             if (StringUtils.isNotBlank(meetingName)) {
                 add.setMeetingName(meetingName);
             }
-            if (bookMeetingInfoList.contains(add)) {
-                throw new FrontException("预约信息重复");
-            } else {
-                bookMeetingInfoService.addBookInfos(userId, Collections.singletonList(add));
+
+            // 检查和自己的预定是否有冲突的
+            for (BookMeetingInfoDto info : currentUserBookList) {
+                if (BookMeetingInfoDto.isRepeat(add, info)) {
+                    String format = "与自己的预约信息重复\n%s";
+                    throw new FrontException(String.format(format, info.bookInfo()));
+                }
             }
+
+            // 检查和他人的预定是否有冲突的
+            for (BookMeetingInfoDto info : otherUserBookList) {
+                if (BookMeetingInfoDto.isRepeat(add, info)) {
+                    UserDto userInfo = userLogic.getById(info.getUserId());
+                    if (userInfo == null) {
+                        bookMeetingInfoService.deleteBookInfos(Collections.singletonList(info.getId()));
+                        log.warn("[删除] 有预定信息，但是无对应用户信息，bookId = " + info.getId() + "，信息：" + info.bookInfo());
+                        continue;
+                    }
+                    String format = "与他人的预约信息重复\n人员：%s\n%s";
+                    throw new FrontException(String.format(format, userInfo.getUsername(), info.bookInfo()));
+                }
+            }
+
+            bookMeetingInfoService.addBookInfos(userId, Collections.singletonList(add));
         }
 
         return true;

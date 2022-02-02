@@ -142,6 +142,10 @@ public class UserLogic {
         return getUserInfo(userDto);
     }
 
+    public UserDto getById(Integer userId) {
+        return userService.getById(userId);
+    }
+
     public boolean deleteUser(Integer id) {
         return userService.deleteLocalUser(id);
     }

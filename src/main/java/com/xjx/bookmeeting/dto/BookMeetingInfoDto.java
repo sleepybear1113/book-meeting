@@ -55,6 +55,17 @@ public class BookMeetingInfoDto implements Serializable {
      */
     private Integer autoSignIn;
 
+    /**
+     * 获取年月日<br/>
+     *
+     * @return 格式为 2022-07-15，若无则 null
+     */
+    public String getYmd() {
+        if (this.year == null) {
+            return null;
+        }
+        return this.year + ((this.month < 10 ? "0" : "") + this.month) + ((this.day < 10 ? "0" : "") + this.day);
+    }
 
     /**
      * 获取可预订的天数
@@ -139,7 +150,7 @@ public class BookMeetingInfoDto implements Serializable {
             }
             return CanBookEnum.READY;
         } else {
-            // 非周期预定，也就是
+            // 非周期预定，也就是单次按照天预定
             if (this.year == null || this.month == null || this.day == null) {
                 return CanBookEnum.EXPIRED;
             }
@@ -166,22 +177,22 @@ public class BookMeetingInfoDto implements Serializable {
     }
 
     public TimeEnum getTimeBeginTimeEnum() {
-        return TimeEnum.getByTime(timeBegin);
+        return TimeEnum.getByTime(this.timeBegin);
     }
 
     public TimeEnum getTimeEndTimeEnum() {
-        return TimeEnum.getByTime(timeEnd);
+        return TimeEnum.getByTime(this.timeEnd);
     }
 
     public AreaTypeEnum getAreaIdEnum() {
-        return AreaTypeEnum.getAreaTypeEnum(areaId);
+        return AreaTypeEnum.getAreaTypeEnum(this.areaId);
     }
 
     public boolean isValid() {
-        if (areaId == null || roomId == null) {
+        if (this.areaId == null || this.roomId == null) {
             return false;
         }
-        if (year == null || month == null || day == null) {
+        if (this.year == null || this.month == null || this.day == null) {
             return week != null;
         }
 
@@ -228,6 +239,25 @@ public class BookMeetingInfoDto implements Serializable {
         return weeks;
     }
 
+    /**
+     * 如果是周期预定，那么直接返回周；如果是单次预定，那么返回最近的要预定的周
+     *
+     * @return week
+     */
+    public Integer getBookedWeek() {
+        if (this.week != null) {
+            return this.week;
+        }
+
+        CALENDAR.setTime(new Date());
+        CALENDAR.set(Calendar.DAY_OF_MONTH, this.day);
+        CALENDAR.set(Calendar.MONTH, this.month - 1);
+        CALENDAR.set(Calendar.YEAR, this.year);
+        int bookWeek = CALENDAR.get(Calendar.DAY_OF_WEEK) - 1;
+        bookWeek = bookWeek == 0 ? 7 : bookWeek;
+        return bookWeek;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -237,12 +267,43 @@ public class BookMeetingInfoDto implements Serializable {
             return false;
         }
         BookMeetingInfoDto that = (BookMeetingInfoDto) o;
-        return Objects.equals(week, that.week) && Objects.equals(year, that.year) && Objects.equals(month, that.month) && Objects.equals(day, that.day) && Objects.equals(timeBegin, that.timeBegin) && Objects.equals(timeEnd, that.timeEnd) && Objects.equals(areaId, that.areaId) && Objects.equals(roomId, that.roomId);
+        return Objects.equals(this.week, that.week) && Objects.equals(this.year, that.year) && Objects.equals(this.month, that.month) && Objects.equals(this.day, that.day) && Objects.equals(this.timeBegin, that.timeBegin) && Objects.equals(this.timeEnd, that.timeEnd) && Objects.equals(this.areaId, that.areaId) && Objects.equals(this.roomId, that.roomId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(year, month, day, timeBegin, timeEnd, areaId, roomId);
+        return Objects.hash(this.year, this.month, this.day, this.timeBegin, this.timeEnd, this.areaId, this.roomId);
     }
 
+    public static boolean isRepeat(BookMeetingInfoDto b1, BookMeetingInfoDto b2) {
+        if (b1 == null || b2 == null) {
+            return false;
+        }
+
+        Integer week1 = b1.getBookedWeek();
+        Integer week2 = b2.getBookedWeek();
+        if (week1 == null || week2 == null) {
+            return false;
+        }
+        if (week1.equals(week2)) {
+            return timeConflict(b1.getTimeBeginTimeEnum(), b1.getTimeEndTimeEnum(), b2.getTimeBeginTimeEnum(), b2.getTimeEndTimeEnum());
+        }
+        return false;
+    }
+
+    private static boolean timeConflict(TimeEnum begin1, TimeEnum end1, TimeEnum begin2, TimeEnum end2) {
+        int beginMax = Math.max(begin1.getIndex(), begin2.getIndex());
+        int endMin = Math.min(end1.getIndex(), end2.getIndex());
+        return endMin > beginMax;
+    }
+
+    public String bookInfo() {
+        if (this.week != null) {
+            String format = "[周期预定] 信息：会议室：%s，每周 %s，时间：%s-%s";
+            return String.format(format, this.roomName, getBookedWeek(), this.timeBegin, this.timeEnd);
+        } else {
+            String format = "[单次预定] 信息：会议室：%s，日期 %s，时间：%s-%s";
+            return String.format(format, this.roomName, getYmd(), this.timeBegin, this.timeEnd);
+        }
+    }
 }
