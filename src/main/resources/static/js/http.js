@@ -23,7 +23,7 @@ function getUserBookedRooms() {
             return;
         }
 
-        if (response.result == null || response.result.length === 0) {
+        if (response.result == null) {
             return;
         }
 

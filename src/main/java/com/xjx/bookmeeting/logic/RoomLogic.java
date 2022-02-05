@@ -167,7 +167,7 @@ public class RoomLogic {
 
             // 检查和自己的预定是否有冲突的
             for (BookMeetingInfoDto info : currentUserBookList) {
-                if (BookMeetingInfoDto.isRepeat(add, info)) {
+                if (BookMeetingInfoDto.isConflict(add, info)) {
                     String format = "与自己的预约信息重复\n%s";
                     throw new FrontException(String.format(format, info.bookInfo()));
                 }
@@ -175,7 +175,7 @@ public class RoomLogic {
 
             // 检查和他人的预定是否有冲突的
             for (BookMeetingInfoDto info : otherUserBookList) {
-                if (BookMeetingInfoDto.isRepeat(add, info)) {
+                if (BookMeetingInfoDto.isConflict(add, info)) {
                     UserDto userInfo = userLogic.getById(info.getUserId());
                     if (userInfo == null) {
                         bookMeetingInfoService.deleteBookInfos(Collections.singletonList(info.getId()));

@@ -275,18 +275,38 @@ public class BookMeetingInfoDto implements Serializable {
         return Objects.hash(this.year, this.month, this.day, this.timeBegin, this.timeEnd, this.areaId, this.roomId);
     }
 
-    public static boolean isRepeat(BookMeetingInfoDto b1, BookMeetingInfoDto b2) {
+    /**
+     * 会议室冲突检测<br/>
+     *
+     * @param b1 b1
+     * @param b2 b2
+     * @return 是否冲突
+     */
+    public static boolean isConflict(BookMeetingInfoDto b1, BookMeetingInfoDto b2) {
         if (b1 == null || b2 == null) {
             return false;
         }
 
         Integer week1 = b1.getBookedWeek();
         Integer week2 = b2.getBookedWeek();
+        Long roomId1 = b1.getRoomId();
+        Long roomId2 = b2.getRoomId();
+        Integer userId1 = b1.getUserId();
+        Integer userId2 = b2.getUserId();
         if (week1 == null || week2 == null) {
             return false;
         }
         if (week1.equals(week2)) {
-            return timeConflict(b1.getTimeBeginTimeEnum(), b1.getTimeEndTimeEnum(), b2.getTimeBeginTimeEnum(), b2.getTimeEndTimeEnum());
+            // 同一天，那么进行校验时间
+            if (Objects.equals(userId1, userId2)) {
+                // 校验自己的冲突，仅时间
+                return timeConflict(b1.getTimeBeginTimeEnum(), b1.getTimeEndTimeEnum(), b2.getTimeBeginTimeEnum(), b2.getTimeEndTimeEnum());
+            } else {
+                // 校验别人的冲突，仅同会议室
+                if (Objects.equals(roomId1, roomId2)) {
+                    return timeConflict(b1.getTimeBeginTimeEnum(), b1.getTimeEndTimeEnum(), b2.getTimeBeginTimeEnum(), b2.getTimeEndTimeEnum());
+                }
+            }
         }
         return false;
     }
