@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -129,7 +130,25 @@ public class UserService {
 
         UserCookie userCookieQuery = new UserCookie();
         userCookieQuery.setUserId(id);
-        UserCookie userCookie = userCookieMapper.selectOne(new QueryWrapper<>(userCookieQuery));
+
+        UserCookie userCookie = null;
+        List<UserCookie> userCookieList = userCookieMapper.selectList(new QueryWrapper<>(userCookieQuery));
+        if (CollectionUtils.isNotEmpty(userCookieList)) {
+            if (userCookieList.size() == 1) {
+                userCookie = userCookieList.get(0);
+            } else {
+                // 如果出现多个，那么需要删除旧的 cookie
+                userCookieList.sort(Comparator.comparingInt(UserCookie::getId));
+                int size = userCookieList.size();
+                userCookie = userCookieList.get(size - 1);
+                userCookieList.remove(size - 1);
+                for (UserCookie delete : userCookieList) {
+                    userCookieMapper.deleteById(delete.getId());
+                    log.info("删除用户[{}]多余 cookie", user.getUsername());
+                }
+            }
+        }
+
         if (userCookie != null) {
             userDto.setCookie(userCookie.getCookie());
             userDto.setUserCookieId(userCookie.getId());
