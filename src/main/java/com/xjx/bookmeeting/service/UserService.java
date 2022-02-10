@@ -84,16 +84,16 @@ public class UserService {
 
         // 写/更新 cookie
         UserCookie entity = new UserCookie();
-        Integer userCookieId = userDto.getUserCookieId();
-        entity.setUserId(userCookieId);
         entity.setCookie(userDto.getCookie());
         entity.setUserId(userId);
-        if (userCookieId == null) {
+        if (existUserDto == null) {
             entity.fillAllTime();
             userCookieMapper.insert(entity);
         } else {
             entity.fillModifyTime();
-            userCookieMapper.updateById(entity);
+            UserCookie updateQuery = new UserCookie();
+            updateQuery.setUserId(entity.getUserId());
+            userCookieMapper.update(entity, new QueryWrapper<>(updateQuery));
         }
 
         return getUserDto(userDto.getId());
@@ -128,27 +128,7 @@ public class UserService {
         userDto = OtherUtils.convert(user, UserDto.class);
         Integer id = user.getId();
 
-        UserCookie userCookieQuery = new UserCookie();
-        userCookieQuery.setUserId(id);
-
-        UserCookie userCookie = null;
-        List<UserCookie> userCookieList = userCookieMapper.selectList(new QueryWrapper<>(userCookieQuery));
-        if (CollectionUtils.isNotEmpty(userCookieList)) {
-            if (userCookieList.size() == 1) {
-                userCookie = userCookieList.get(0);
-            } else {
-                // 如果出现多个，那么需要删除旧的 cookie
-                userCookieList.sort(Comparator.comparingInt(UserCookie::getId));
-                int size = userCookieList.size();
-                userCookie = userCookieList.get(size - 1);
-                userCookieList.remove(size - 1);
-                for (UserCookie delete : userCookieList) {
-                    userCookieMapper.deleteById(delete.getId());
-                    log.info("删除用户[{}]多余 cookie", user.getUsername());
-                }
-            }
-        }
-
+        UserCookie userCookie = getByUserIdDeduplication(id);
         if (userCookie != null) {
             userDto.setCookie(userCookie.getCookie());
             userDto.setUserCookieId(userCookie.getId());
@@ -161,6 +141,40 @@ public class UserService {
         UserDto userDto = new UserDto();
         userDto.setId(userId);
         return getUserDto(userDto);
+    }
+
+    /**
+     * 通过 userId 获取 userCookie，同时去除重复的 userId 的记录
+     *
+     * @param userId userId
+     * @return UserCookie
+     */
+    private UserCookie getByUserIdDeduplication(Integer userId) {
+        UserCookie userCookieQuery = new UserCookie();
+        userCookieQuery.setUserId(userId);
+
+        UserCookie userCookie = null;
+        List<UserCookie> userCookieList = userCookieMapper.selectList(new QueryWrapper<>(userCookieQuery));
+        if (CollectionUtils.isNotEmpty(userCookieList)) {
+            if (userCookieList.size() == 1) {
+                userCookie = userCookieList.get(0);
+            } else {
+                // 如果出现多个，那么需要删除旧的 cookie
+                userCookieList.sort(Comparator.comparingInt(UserCookie::getId));
+                int size = userCookieList.size();
+                userCookie = userCookieList.get(size - 1);
+                userCookieList.remove(size - 1);
+
+                User user = userMapper.selectById(userId);
+                String username = user == null ? null : user.getUsername();
+                for (UserCookie delete : userCookieList) {
+                    userCookieMapper.deleteById(delete.getId());
+                    log.info("删除用户[{}]多余 cookie", username);
+                }
+            }
+        }
+
+        return userCookie;
     }
 
     public boolean deleteLocalUser(Integer id) {
