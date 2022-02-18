@@ -1,8 +1,8 @@
 package com.xjx.bookmeeting.actions;
 
 import com.alibaba.fastjson.JSON;
-import com.xjx.bookmeeting.dto.Floor;
-import com.xjx.bookmeeting.dto.MeetingResponse;
+import com.xjx.bookmeeting.actions.dto.Floor;
+import com.xjx.bookmeeting.actions.dto.MeetingResponse;
 import com.xjx.bookmeeting.enumeration.AreaTypeEnum;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.utils.http.HttpHelper;

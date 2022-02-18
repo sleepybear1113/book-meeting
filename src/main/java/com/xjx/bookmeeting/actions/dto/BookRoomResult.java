@@ -1,4 +1,4 @@
-package com.xjx.bookmeeting.dto;
+package com.xjx.bookmeeting.actions.dto;
 
 import com.xjx.bookmeeting.exception.FrontException;
 import lombok.Data;

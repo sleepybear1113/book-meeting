@@ -2,14 +2,16 @@ package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.GetFloorAction;
 import com.xjx.bookmeeting.actions.GetSpareRoomAction;
+import com.xjx.bookmeeting.actions.dto.Floor;
+import com.xjx.bookmeeting.actions.dto.Room;
+import com.xjx.bookmeeting.bo.JoinPeople;
 import com.xjx.bookmeeting.dto.BookMeetingInfoDto;
-import com.xjx.bookmeeting.dto.Floor;
-import com.xjx.bookmeeting.dto.Room;
 import com.xjx.bookmeeting.dto.UserDto;
 import com.xjx.bookmeeting.enumeration.AreaTypeEnum;
 import com.xjx.bookmeeting.enumeration.TimeEnum;
 import com.xjx.bookmeeting.exception.FrontException;
 import com.xjx.bookmeeting.login.UserCookieInfo;
+import com.xjx.bookmeeting.query.BookMeetingInfoQuery;
 import com.xjx.bookmeeting.service.BookMeetingInfoService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -74,35 +76,35 @@ public class RoomLogic {
     /**
      * 预定会议室
      *
-     * @param userId      userId
-     * @param dayString   某天 year-month-day，和 weekStrings 二选一
-     * @param hourBegin   小时开始时间
-     * @param hourEnd     小时结束时间
-     * @param minuteBegin 分钟开始时间
-     * @param minuteEnd   分钟结束时间
-     * @param roomId      会议室 id
-     * @param areaId      区域 id
-     * @param meetingName 会议名
-     * @param roomName    会议室名字
-     * @param bookTime    预定期限
-     * @param weekStrings 周期预定的周期数组，和 dayString 二选一
-     * @param autoSignIn  是否自动预定
+     * @param userId               userId
+     * @param bookMeetingInfoQuery bookMeetingInfoQuery
      * @return Boolean
      */
-    public Boolean bookRoom(Integer userId, String dayString, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName, String bookTime, String weekStrings, Integer autoSignIn) {
-        if (userId == null || roomId == null || areaId == null || StringUtils.isBlank(bookTime)) {
+    public Boolean bookRoom(Integer userId, BookMeetingInfoQuery bookMeetingInfoQuery) {
+        if (bookMeetingInfoQuery == null) {
             throw new FrontException("参数错误");
+        }
+        if (userId == null || bookMeetingInfoQuery.getRoomId() == null || bookMeetingInfoQuery.getAreaId() == null || StringUtils.isBlank(bookMeetingInfoQuery.getBookTime())) {
+            throw new FrontException("参数错误");
+        }
+
+        UserDto userDto = userLogic.getById(userId);
+        List<JoinPeople> joinPeopleList = JoinPeople.parse(bookMeetingInfoQuery.getJoinPeople());
+        if (CollectionUtils.isNotEmpty(joinPeopleList)) {
+            // 去除当前用户的与会人员
+            joinPeopleList.removeIf(p -> String.valueOf(p.getUserId()).equals(userDto.getLoginIdWeaver()));
         }
 
         // 开始组装预定信息
         // 包含至少一个 null 或者全是非 null 数字
-        List<Integer> weeks = BookMeetingInfoDto.weekToList(weekStrings);
-        if (StringUtils.isBlank(weekStrings)) {
-            if (StringUtils.isBlank(dayString) || StringUtils.isBlank(hourBegin) || StringUtils.isBlank(hourEnd) || StringUtils.isBlank(minuteBegin) || StringUtils.isBlank(minuteEnd)) {
+        String dayString = bookMeetingInfoQuery.getDayString();
+        List<Integer> weeks = BookMeetingInfoDto.weekToList(bookMeetingInfoQuery.getWeeks());
+        if (StringUtils.isBlank(bookMeetingInfoQuery.getWeeks())) {
+            if (StringUtils.isBlank(dayString) || StringUtils.isBlank(bookMeetingInfoQuery.getTimeBegin()) || StringUtils.isBlank(bookMeetingInfoQuery.getTimeEnd())) {
                 throw new FrontException("参数错误");
             }
         } else {
-            if (!BookMeetingInfoDto.isWeekStringValid(weekStrings)) {
+            if (!BookMeetingInfoDto.isWeekStringValid(bookMeetingInfoQuery.getWeeks())) {
                 throw new FrontException("参数错误");
             }
             dayString = "0-0-0";
@@ -122,14 +124,9 @@ public class RoomLogic {
         CALENDAR.set(Calendar.MONTH, month - 1);
         CALENDAR.set(Calendar.DAY_OF_MONTH, day);
 
-        String timeBegin = hourBegin + minuteBegin;
-        String timeEnd = hourEnd + minuteEnd;
-        if (Long.parseLong(timeBegin) >= Long.parseLong(timeEnd)) {
-            throw new FrontException("时间起止错误");
-        }
-        TimeEnum timeBeginTimeEnum = TimeEnum.getByTime(timeBegin);
-        TimeEnum timeEndTimeEnum = TimeEnum.getByTime(timeEnd);
-        if (timeBeginTimeEnum == null || timeEndTimeEnum == null) {
+        TimeEnum timeBeginTimeEnum = TimeEnum.getByTime(bookMeetingInfoQuery.getTimeBegin());
+        TimeEnum timeEndTimeEnum = TimeEnum.getByTime(bookMeetingInfoQuery.getTimeEnd());
+        if (timeBeginTimeEnum == null || timeEndTimeEnum == null || timeBeginTimeEnum.getIndex() >= timeEndTimeEnum.getIndex()) {
             throw new FrontException("时间起止错误");
         }
 
@@ -153,16 +150,17 @@ public class RoomLogic {
             add.setYear(year);
             add.setMonth(month);
             add.setDay(day);
-            add.setTimeBegin(timeBegin);
-            add.setTimeEnd(timeEnd);
-            add.setRoomId(roomId);
-            add.setAreaId(areaId);
-            add.setRoomName(roomName);
-            add.setBookTime(bookTime);
+            add.setTimeBegin(bookMeetingInfoQuery.getTimeBegin());
+            add.setTimeEnd(bookMeetingInfoQuery.getTimeEnd());
+            add.setRoomId(bookMeetingInfoQuery.getRoomId());
+            add.setAreaId(bookMeetingInfoQuery.getAreaId());
+            add.setRoomName(bookMeetingInfoQuery.getRoomName());
+            add.setBookTime(bookMeetingInfoQuery.getBookTime());
             add.setWeek(week);
-            add.setAutoSignIn(autoSignIn);
-            if (StringUtils.isNotBlank(meetingName)) {
-                add.setMeetingName(meetingName);
+            add.setAutoSignIn(bookMeetingInfoQuery.getAutoSignIn());
+            add.setJoinPeople(JoinPeople.listToString(joinPeopleList));
+            if (StringUtils.isNotBlank(bookMeetingInfoQuery.getMeetingName())) {
+                add.setMeetingName(bookMeetingInfoQuery.getMeetingName());
             }
 
             // 检查和自己的预定是否有冲突的

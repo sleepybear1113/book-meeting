@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @date 2021/8/30 9:52
  */
 @Data
-public class UserInfo implements Serializable {
+public class NetEaseUserInfo implements Serializable {
     @Serial
     private static final long serialVersionUID = -9017793880291711902L;
 

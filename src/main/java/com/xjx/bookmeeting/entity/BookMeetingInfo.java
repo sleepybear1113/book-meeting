@@ -85,6 +85,13 @@ public class BookMeetingInfo extends BaseDomain {
     @TableField("auto_sign_in")
     private Integer autoSignIn;
 
+    /**
+     * 与会人员<br/>
+     * 格式：userId@name,userId@name,userId@name
+     */
+    @TableField("join_people")
+    private String joinPeople;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -122,7 +129,8 @@ public class BookMeetingInfo extends BaseDomain {
                     meeting_name TEXT,
                     room_name    TEXT,
                     book_time    TEXT                              NOT NULL,
-                    auto_sign_in INTEGER
+                    auto_sign_in INTEGER,
+                    join_people  TEXT
                 )""";
     }
 }

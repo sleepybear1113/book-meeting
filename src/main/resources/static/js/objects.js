@@ -94,5 +94,42 @@ class BookMeetingInfo extends BaseDomain {
         this.roomName = props.roomName;
         this.week = props.week;
         this.autoSignIn = props.autoSignIn;
+        this.bookTime = props.bookTime;
+
+        let joinPeople = props.joinPeople;
+        if (joinPeople == null || joinPeople === "") {
+            this.joinPeopleList = [];
+        } else {
+            this.joinPeopleList = joinPeople.split(",");
+        }
+    }
+}
+
+class UserInfo extends BaseDomain {
+    constructor(props) {
+        super(props);
+
+        if (props == null) {
+            return;
+        }
+        this.claimComp = props.claimComp;
+        this.claimCompName = props.claimCompName;
+        this.costCenter = props.costCenter;
+        this.dep1Id = props.dep1Id;
+        this.dep1Name = props.dep1Name;
+        this.dep1NameEx = props.dep1NameEx;
+        this.dep2Id = props.dep2Id;
+        this.dep2Name = props.dep2Name;
+        this.depFullName = props.depFullName;
+        this.dept3Id = props.dept3Id;
+        this.dept3Name = props.dept3Name;
+        this.email = props.email;
+        this.isGameDept = props.isGameDept;
+        this.jobTitle = props.jobTitle;
+        this.jobTitleId = props.jobTitleId;
+        this.lastName = props.lastName;
+        this.loginId = props.loginId;
+        this.sex = props.sex;
+        this.userId = props.userId;
     }
 }

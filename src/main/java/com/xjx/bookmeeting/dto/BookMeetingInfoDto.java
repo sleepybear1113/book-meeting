@@ -1,5 +1,6 @@
 package com.xjx.bookmeeting.dto;
 
+import com.xjx.bookmeeting.bo.JoinPeople;
 import com.xjx.bookmeeting.enumeration.AreaTypeEnum;
 import com.xjx.bookmeeting.enumeration.CanBookEnum;
 import com.xjx.bookmeeting.enumeration.TimeEnum;
@@ -33,10 +34,13 @@ public class BookMeetingInfoDto implements Serializable {
     private Integer month;
     private Integer day;
 
+    private String dayString;
+
     /**
      * 按照周预定，如果有这个字段
      */
     private Integer week;
+    private String weeks;
 
     private String timeBegin;
     private String timeEnd;
@@ -54,6 +58,12 @@ public class BookMeetingInfoDto implements Serializable {
      * 是否自动签到
      */
     private Integer autoSignIn;
+
+    /**
+     * 与会人员<br/>
+     * 格式：userId@name,userId@name,userId@name
+     */
+    private String joinPeople;
 
     /**
      * 获取年月日<br/>
@@ -325,5 +335,14 @@ public class BookMeetingInfoDto implements Serializable {
             String format = "[单次预定] 信息：会议室：%s，日期 %s，时间：%s-%s";
             return String.format(format, this.roomName, getYmd(), this.timeBegin, this.timeEnd);
         }
+    }
+
+    public static String parseJoinPeople(String peopleInfoList) {
+        StringBuilder res = new StringBuilder();
+        List<JoinPeople> joinPeopleList = JoinPeople.parse(peopleInfoList);
+        for (JoinPeople joinPeople : joinPeopleList) {
+            res.append(",").append(joinPeople.getUserId());
+        }
+        return res.toString();
     }
 }

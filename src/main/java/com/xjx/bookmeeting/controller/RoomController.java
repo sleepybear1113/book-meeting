@@ -1,12 +1,14 @@
 package com.xjx.bookmeeting.controller;
 
+import com.xjx.bookmeeting.actions.dto.Floor;
+import com.xjx.bookmeeting.actions.dto.Room;
 import com.xjx.bookmeeting.dto.BookMeetingInfoDto;
-import com.xjx.bookmeeting.dto.Floor;
-import com.xjx.bookmeeting.dto.Room;
 import com.xjx.bookmeeting.dto.UserDto;
 import com.xjx.bookmeeting.helper.CookieHelper;
 import com.xjx.bookmeeting.logic.RoomLogic;
+import com.xjx.bookmeeting.query.BookMeetingInfoQuery;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +41,9 @@ public class RoomController {
     }
 
     @RequestMapping("/room/bookRoom")
-    public Boolean bookRoom(String day, String hourBegin, String hourEnd, String minuteBegin, String minuteEnd, Long roomId, Integer areaId, String meetingName, String roomName, String bookTime, String weeks, Integer autoSignIn) {
+    public Boolean bookRoom(@RequestBody BookMeetingInfoQuery bookMeetingInfoDtoQuery, HttpServletRequest request) {
         UserDto userDto = CookieHelper.getLoginCookieWithFrontException();
-        return roomLogic.bookRoom(userDto.getId(), day, hourBegin, hourEnd, minuteBegin, minuteEnd, roomId, areaId, meetingName, roomName, bookTime, weeks, autoSignIn);
+        return roomLogic.bookRoom(userDto.getId(), bookMeetingInfoDtoQuery);
     }
 
     @RequestMapping("/room/getBookedRooms")

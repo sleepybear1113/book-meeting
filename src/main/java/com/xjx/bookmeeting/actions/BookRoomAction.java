@@ -1,7 +1,7 @@
 package com.xjx.bookmeeting.actions;
 
 import com.alibaba.fastjson.JSON;
-import com.xjx.bookmeeting.dto.BookRoomResult;
+import com.xjx.bookmeeting.actions.dto.BookRoomResult;
 import com.xjx.bookmeeting.enumeration.AreaTypeEnum;
 import com.xjx.bookmeeting.enumeration.TimeEnum;
 import com.xjx.bookmeeting.login.UserCookieInfo;

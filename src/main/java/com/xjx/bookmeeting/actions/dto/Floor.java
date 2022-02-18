@@ -1,4 +1,4 @@
-package com.xjx.bookmeeting.dto;
+package com.xjx.bookmeeting.actions.dto;
 
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.annotation.JSONField;

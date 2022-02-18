@@ -1,8 +1,8 @@
 package com.xjx.bookmeeting.actions;
 
 import com.alibaba.fastjson.JSON;
-import com.xjx.bookmeeting.dto.BookRoomResult;
-import com.xjx.bookmeeting.dto.SignInRoomResponse;
+import com.xjx.bookmeeting.actions.dto.BookRoomResult;
+import com.xjx.bookmeeting.actions.dto.SignInRoomResponse;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.utils.http.HttpHelper;
 import com.xjx.bookmeeting.utils.http.HttpResponseHelper;

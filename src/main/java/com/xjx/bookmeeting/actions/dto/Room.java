@@ -1,10 +1,10 @@
-package com.xjx.bookmeeting.dto;
-
-import java.util.List;
+package com.xjx.bookmeeting.actions.dto;
 
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author XJX

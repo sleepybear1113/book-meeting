@@ -7,7 +7,7 @@ import com.xjx.bookmeeting.login.MeetingLogin;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.service.UserService;
 import com.xjx.bookmeeting.utils.login.AuthTypeEnum;
-import com.xjx.bookmeeting.utils.login.UserInfo;
+import com.xjx.bookmeeting.utils.login.NetEaseUserInfo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -82,12 +82,12 @@ public class UserLogic {
             throw new FrontException("认证方式错误");
         }
 
-        UserInfo userInfo = new UserInfo();
-        userInfo.setAuthType(authTypeEnum);
-        userInfo.setCorpId(username);
-        userInfo.setCorpPw(password);
+        NetEaseUserInfo netEaseUserInfo = new NetEaseUserInfo();
+        netEaseUserInfo.setAuthType(authTypeEnum);
+        netEaseUserInfo.setCorpId(username);
+        netEaseUserInfo.setCorpPw(password);
 
-        UserCookieInfo userCookieInfo = MeetingLogin.loginAndGetCookie(userInfo);
+        UserCookieInfo userCookieInfo = MeetingLogin.loginAndGetCookie(netEaseUserInfo);
         boolean valid = UserCookieInfo.isValid(userCookieInfo);
         if (valid) {
             log.info("userDto " + username + " login success!");

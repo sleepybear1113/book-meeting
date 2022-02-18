@@ -29,18 +29,18 @@ public class NetEaseVerifyUtil {
     /**
      * 进行统一身份认证
      *
-     * @param url      原网站跳转统一身份认证的 URL
-     * @param userInfo 用户登录信息
+     * @param url             原网站跳转统一身份认证的 URL
+     * @param netEaseUserInfo 用户登录信息
      * @return 返回认证后的 cookie
      */
-    public static List<Cookie> verify(String url, UserInfo userInfo) {
+    public static List<Cookie> verify(String url, NetEaseUserInfo netEaseUserInfo) {
         String redirectLocation = toVerify(url);
         if (StringUtils.isBlank(redirectLocation)) {
             log.warn("============= to verify failed! =============");
             return new ArrayList<>();
         }
 
-        LocationCookie locationCookie = login(redirectLocation, userInfo);
+        LocationCookie locationCookie = login(redirectLocation, netEaseUserInfo);
         if (locationCookie == null) {
             log.warn("============= login failed! =============");
             return new ArrayList<>();
@@ -103,19 +103,19 @@ public class NetEaseVerifyUtil {
     /**
      * 进行登录，需要用户信息
      *
-     * @param userInfo 用户信息
-     * @param url      跳转到登录页的 URL
+     * @param netEaseUserInfo 用户信息
+     * @param url             跳转到登录页的 URL
      * @return 登录成功之后会返回 cookie 和重定向 location
      */
-    private static LocationCookie login(String url, UserInfo userInfo) {
+    private static LocationCookie login(String url, NetEaseUserInfo netEaseUserInfo) {
         log.info("============== login ==============");
-        if (StringUtils.isBlank(url) || userInfo == null || userInfo.isInvalid()) {
+        if (StringUtils.isBlank(url) || netEaseUserInfo == null || netEaseUserInfo.isInvalid()) {
             log.warn("invalid");
             return null;
         }
 
         HttpHelper loginHttpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(url, MethodEnum.METHOD_POST);
-        loginHttpHelper.setPostBody(userInfo.getBodyString(), ContentType.APPLICATION_FORM_URLENCODED);
+        loginHttpHelper.setPostBody(netEaseUserInfo.getBodyString(), ContentType.APPLICATION_FORM_URLENCODED);
         HttpResponseHelper response = loginHttpHelper.request();
         if (response == null) {
             log.warn("response is null");

@@ -2,9 +2,9 @@ package com.xjx.bookmeeting.logic;
 
 import com.xjx.bookmeeting.actions.BookRoomAction;
 import com.xjx.bookmeeting.actions.SignInRoomAction;
+import com.xjx.bookmeeting.actions.dto.BookRoomResult;
+import com.xjx.bookmeeting.actions.dto.SignInRoomResponse;
 import com.xjx.bookmeeting.dto.BookMeetingInfoDto;
-import com.xjx.bookmeeting.dto.BookRoomResult;
-import com.xjx.bookmeeting.dto.SignInRoomResponse;
 import com.xjx.bookmeeting.dto.UserDto;
 import com.xjx.bookmeeting.enumeration.AutoSignEnum;
 import com.xjx.bookmeeting.enumeration.CanBookEnum;
@@ -47,7 +47,7 @@ public class BookMeetingLogic {
             try {
                 bookUserMeeting(userDto);
             } catch (Exception e) {
-                log.warn("用户 " + userDto.getUsername() + " 预定失败");
+                log.warn("用户 " + userDto.getUsername() + " 预定失败", e);
             }
             OtherUtils.sleep(2000);
         }
@@ -98,7 +98,7 @@ public class BookMeetingLogic {
             BookRoomAction.FormData formData = new BookRoomAction.FormData();
             formData.setTimeRange(bookMeetingInfo.getYear(), bookMeetingInfo.getMonth(), bookMeetingInfo.getDay(), bookMeetingInfo.getTimeBeginTimeEnum(), bookMeetingInfo.getTimeEndTimeEnum());
             formData.setAreaId(bookMeetingInfo.getAreaIdEnum());
-            formData.setJoinUserIds(loginIdWeaver);
+            formData.setJoinUserIds(loginIdWeaver + BookMeetingInfoDto.parseJoinPeople(bookMeetingInfo.getJoinPeople()));
             formData.setMeetingRoomId(bookMeetingInfo.getRoomId());
             if (StringUtils.isNotBlank(bookMeetingInfo.getMeetingName())) {
                 formData.setName(bookMeetingInfo.getMeetingName());

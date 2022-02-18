@@ -172,6 +172,8 @@ function bookRoom() {
     let annualChecked = document.getElementById("annual").checked;
     let autoSignIn = document.getElementById("auto-sign-in-checkbox").checked;
 
+    let joinPeople = getJoinPeople();
+
     let weekOptions = getWeeks();
     if (annualChecked) {
         if (weekOptions.length === 0) {
@@ -187,22 +189,24 @@ function bookRoom() {
     }
 
     let url = "/room/bookRoom";
-    axios.get(url, {
-        params: {
-            day: day,
-            hourBegin: hourBegin,
-            hourEnd: hourEnd,
-            minuteBegin: minuteBegin,
-            minuteEnd: minuteEnd,
-            roomId: roomIdItem,
-            areaId: areaIdItem,
-            meetingName: bookOnceMeetingOnce,
-            roomName: bookRoomFloorName + bookRoomName,
-            bookTime: bookTime,
-            weeks: weekOptions,
-            autoSignIn: autoSignIn === true ? 1 : 0,
+    axios({
+            url: url,
+            method: "post",
+            data: {
+                dayString: day,
+                weeks: weekOptions,
+                areaId: areaIdItem,
+                roomId: roomIdItem,
+                timeBegin: hourBegin + ":" + minuteBegin,
+                timeEnd: hourEnd + ":" + minuteEnd,
+                meetingName: bookOnceMeetingOnce,
+                roomName: bookRoomFloorName + bookRoomName,
+                autoSignIn: autoSignIn === true ? 1 : 0,
+                joinPeople: joinPeople,
+                bookTime: bookTime,
+            },
         }
-    }).then(res => {
+    ).then(res => {
         let response = res.data;
         console.log(response);
         if (!processErrorResult(response)) {
@@ -216,5 +220,33 @@ function bookRoom() {
         } else {
             alert("失败");
         }
+    });
+}
+
+function queryUserInfo() {
+    let queryKey = document.getElementById("query-user-info-input").value;
+    if (queryKey === "") {
+        return;
+    }
+
+    let url = "/meetingUser/queryUserInfo";
+    axios.get(url, {
+        params: {
+            queryKey
+        }
+    }).then(res => {
+        let response = res.data;
+        console.log(response);
+        if (!processErrorResult(response)) {
+            return;
+        }
+
+        let result = response.result;
+        if (!result) {
+            alert("失败");
+            return;
+        }
+
+        fillQueryUserInfo(result);
     });
 }

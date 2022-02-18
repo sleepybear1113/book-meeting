@@ -53,6 +53,7 @@
             <th>时间</th>
             <th>自动签到</th>
             <th>操作</th>
+            <th>其他与会人员</th>
         </tr>
         <tbody id="booked-rooms-table-result-body">
         </tbody>
@@ -195,10 +196,35 @@
                 <br/>
                 <label for="book-once-meeting-once">会议主题</label><input id="book-once-meeting-once" placeholder="选填">
                 <button id="book-once-button" onclick="bookRoom()">预定</button>
+                <div id="join-people-div">
+                    <span>其他参会人员</span>
+                    <div id="join-people-list"></div>
+                </div>
             </div>
 
-            <div id="book-timed" style="display: none;">
-                <a>多次预定</a>
+            <hr/>
+
+            <div id="meeting-user-info">
+                <div id="user-info-query-place">
+                    <label for="query-user-info-input">输入人员</label><input id="query-user-info-input"
+                                                                          placeholder="暂不支持中文">
+                    <button id="query-user-info-button" onclick="queryUserInfo()">搜索</button>
+                </div>
+
+                <div id="user-info-display-place">
+                    <table>
+                        <caption>搜索人员结果</caption>
+                        <tr>
+                            <th>姓名</th>
+                            <th>部门1</th>
+                            <th>部门2</th>
+                            <th>部门3</th>
+                            <th>userId</th>
+                            <th>邮箱</th>
+                        </tr>
+                        <tbody id="user-info-display-table-result-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

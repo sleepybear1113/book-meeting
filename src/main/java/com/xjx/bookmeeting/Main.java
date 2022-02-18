@@ -3,7 +3,7 @@ package com.xjx.bookmeeting;
 import com.xjx.bookmeeting.login.MeetingLogin;
 import com.xjx.bookmeeting.login.UserCookieInfo;
 import com.xjx.bookmeeting.utils.login.AuthTypeEnum;
-import com.xjx.bookmeeting.utils.login.UserInfo;
+import com.xjx.bookmeeting.utils.login.NetEaseUserInfo;
 
 /**
  * 测试类
@@ -18,7 +18,7 @@ public class Main {
     }
 
     public static void testLogin() {
-        UserInfo userInfo = new UserInfo();
+        NetEaseUserInfo userInfo = new NetEaseUserInfo();
         userInfo.setAuthType(AuthTypeEnum.CORP);
         userInfo.setCorpPw("");
         userInfo.setCorpId("");

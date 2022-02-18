@@ -45,6 +45,7 @@ function fillBookedInfo(bookMeetingInfoList) {
             <th style="border: 1px solid">${timeStr}</th>
             <th style="border: 1px solid">${bookMeetingInfo.autoSignIn === 1}</th>
             <th><button onclick="cancelBookRoom(${bookMeetingInfo.id})">取消</button></th>
+            <th style="border: 1px solid">${bookMeetingInfo.joinPeopleList.join(",")}</th>
         </tr>`;
     }
     bookedRoomTableResult.innerHTML = html;
@@ -225,4 +226,65 @@ function getWeekString(week) {
             return "日";
     }
     return "未知";
+}
+
+function fillQueryUserInfo(userInfoList) {
+    if (userInfoList == null || userInfoList.length === 0) {
+        return;
+    }
+
+    let resultBody = document.getElementById("user-info-display-table-result-body");
+    let html = "";
+    for (let i = 0; i < userInfoList.length; i++) {
+        let item = userInfoList[i];
+        let userInfo = new UserInfo(item);
+        let userIdName = String(userInfo.userId) + "@" + userInfo.lastName;
+        console.log(userIdName);
+        html += `<tr>
+                   <th style="border: 1px solid">${userInfo.lastName}</th>
+                   <th style="border: 1px solid">${userInfo.dep1Name}</th>
+                   <th style="border: 1px solid">${userInfo.dep2Name}</th>
+                   <th style="border: 1px solid">${userInfo.dept3Name}</th>
+                   <th style="border: 1px solid">${userInfo.userId}</th>
+                   <th style="border: 1px solid">${userInfo.email}</th>
+                   <th><button onclick="addJoinPeople(${userInfo.userId}, '${userInfo.lastName}')">添加</button></th>
+               </tr>`
+    }
+
+    resultBody.innerHTML = html;
+}
+
+function addJoinPeople(userId, username) {
+    let joinList = document.getElementById("join-people-list");
+    let children = joinList.children;
+    for (let i = 0; i < children.length; i++) {
+        let child = children[i];
+        if (parseInt(child.id) === parseInt(userId)) {
+            return;
+        }
+    }
+
+    joinList.innerHTML += `<button id="${userId}" onclick="deleteJoinPeople(${userId})">${username}@${userId}</button>`
+}
+
+function deleteJoinPeople(userId) {
+    let joinList = document.getElementById("join-people-list");
+    let children = joinList.children;
+    for (let i = 0; i < children.length; i++) {
+        let child = children[i];
+        if (parseInt(child.id) === parseInt(userId)) {
+            joinList.removeChild(child);
+            return;
+        }
+    }
+}
+
+function getJoinPeople() {
+    let joinPeople = [];
+    let joinListDiv = document.getElementById("join-people-list");
+    for (let i = 0; i < joinListDiv.children.length; i++) {
+        let child = joinListDiv.children[i];
+        joinPeople.push(child.innerText);
+    }
+    return joinPeople.join(",");
 }
