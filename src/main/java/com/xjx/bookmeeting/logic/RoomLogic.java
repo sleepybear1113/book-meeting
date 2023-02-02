@@ -47,7 +47,6 @@ public class RoomLogic {
     public List<Floor> getAllFloors(Integer userId, Integer areaId) {
         UserDto userDtoInfo = userLogic.getUserInfoWithReLoginAndFrontException(userId);
         List<Floor> floors = GetFloorAction.getFloor(new UserCookieInfo(userDtoInfo.getCookie(), userDtoInfo.getLoginIdWeaver()), AreaTypeEnum.getAreaTypeEnum(areaId));
-        log.info(String.valueOf(floors));
         return floors;
     }
 
